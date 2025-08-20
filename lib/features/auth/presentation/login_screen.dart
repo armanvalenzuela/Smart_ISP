@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
+import 'package:smart_isp/features/collector/presentation/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,7 +12,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
-  // Controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -24,10 +24,11 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text.trim();
 
     if (email == dummyEmail && password == dummyPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Login successful!")),
+      // ✅ Navigate to Collector Home and remove Login from stack
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CollectorHomePage()),
       );
-      // Wala pa mona sa main content
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("❌ Invalid credentials!")),
@@ -65,10 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.only(left: 8.0),
                 child: Text(
                   "Login to Continue",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white70
-                  ),
+                  style: TextStyle(fontSize: 18, color: Colors.white70),
                 ),
               ),
               const SizedBox(height: 70),
