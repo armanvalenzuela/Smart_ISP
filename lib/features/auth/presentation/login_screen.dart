@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
 import 'package:smart_isp/features/collector/presentation/home_screen.dart';
+import 'forgot_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text.trim();
 
     if (email == dummyEmail && password == dummyPassword) {
-      // ✅ Navigate to Collector Home and remove Login from stack
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const CollectorHomePage()),
@@ -112,22 +112,38 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 10),
 
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "Forgot password?",
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
-                ),
-              ),
+             Align(
+               alignment: Alignment.centerRight,
+               child: GestureDetector(
+                 onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => const ForgotPassword(),
+                     ),
+                   );
+                 },
+                 child: const Text(
+                   "Forgot Password?",
+                   style: TextStyle(
+                       color: Colors.white,
+                       fontSize: 16,
+                       fontWeight: FontWeight.bold
+                   ),
+                 ),
+
+               )
+             ),
               const SizedBox(height: 30),
+
 
               // Login button
               Center(
                 child: ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    minimumSize: const Size(200, 50),
+                    backgroundColor: Colors.white,
+                    minimumSize: const Size(165, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -138,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 25),
 
               // Sign Up button
               Center(
@@ -153,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[700],
-                    minimumSize: const Size(200, 50),
+                    minimumSize: const Size(165, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

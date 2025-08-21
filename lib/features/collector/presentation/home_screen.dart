@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/auth/presentation/login_screen.dart';
+import 'package:smart_isp/features/profile/presentation/profile_page.dart';
 
 class CollectorHomePage extends StatefulWidget {
   const CollectorHomePage({super.key});
@@ -127,8 +128,11 @@ class _CollectorHomePageState extends State<CollectorHomePage>
                 debugPrint("Payments tapped");
               }),
               const SizedBox(height: 10),
-              _buildMiniFab(Icons.person, "Reports", () {
-                debugPrint("Reports tapped");
+              _buildMiniFab(Icons.person, "Profile", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Profile()),
+                );
               }),
               const SizedBox(height: 10),
               _buildMiniFab(Icons.print, "Settings", () {
