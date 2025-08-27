@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
 
+// A simple FeatureCard widget definition
+class FeatureCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const FeatureCard({Key? key, required this.icon, required this.title})
+    : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue, size: 32),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
+}
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -13,52 +37,142 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
+        titleTextStyle: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ✅ Profile Picture
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.blue.shade100,
-              child: const Icon(Icons.person, size: 60, color: Colors.blue),
-            ),
-            const SizedBox(height: 16),
-
-            // ✅ User Info
-            const Text(
-              "Arman Jo Valenzuela", // Replace with dynamic data later
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              "Collector", // Example role
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-
-            // ✅ Profile Options (based on Figma design)
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            // Profile Card (Clickable)
+            InkWell(
+              onTap: () {
+                // Handle profile card tap
+              },
+              borderRadius: BorderRadius.circular(10),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(Icons.person, color: Colors.black87, size: 22),
+                          SizedBox(width: 12),
+                          Text(
+                            "John Doe",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 18),
+                      Row(
+                        children: const [
+                          Icon(Icons.house, color: Colors.black87, size: 22),
+                          SizedBox(width: 12),
+                          Text(
+                            "Assigned Town:  Manila, Philippines",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              elevation: 2,
-              child: Column(
-                children: [
-                  _buildProfileOption(Icons.edit, "Edit Profile", () {
-                    debugPrint("Edit Profile tapped");
-                  }),
-                  _buildProfileOption(Icons.lock, "Change Password", () {
-                    debugPrint("Change Password tapped");
-                  }),
-                  _buildProfileOption(Icons.logout, "Logout", () {
-                    _showLogoutDialog(context);
-                  }),
-                ],
+            ),
+            SizedBox(height: 12),
+
+            // Date Card (Clickable)
+            InkWell(
+              onTap: () {
+                // Handle date card tap
+              },
+              borderRadius: BorderRadius.circular(10),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(
+                            Icons.calendar_month,
+                            color: Colors.black87,
+                            size: 22,
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            "Select Date: YY-MM-DD",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 18),
+                      Row(
+                        children: const [
+                          Icon(Icons.people, color: Colors.black87, size: 22),
+                          SizedBox(width: 12),
+                          Text(
+                            "Clients Collected: on November 20, 2023",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 12),
+
+            FeatureCard(icon: Icons.print, title: "Default Printer"),
+            SizedBox(height: 35),
+
+            // Logout button
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: Icon(Icons.logout, color: Colors.white),
+                label: Text("Log Out"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 247, 139, 139),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                ),
               ),
             ),
           ],
@@ -72,7 +186,11 @@ class _ProfileState extends State<Profile> {
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
       title: Text(title, style: const TextStyle(fontSize: 16)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Colors.grey,
+      ),
       onTap: onTap,
     );
   }
@@ -82,7 +200,7 @@ class _ProfileState extends State<Profile> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Logout"),
+        title: const Text("LogOut"),
         content: const Text("Are you sure you want to logout?"),
         actions: [
           TextButton(
@@ -97,7 +215,7 @@ class _ProfileState extends State<Profile> {
                 // Replace Placeholder with LoginScreen
               );
             },
-            child: const Text("Logout", style: TextStyle(color: Colors.red)),
+            child: const Text("LogOut", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
