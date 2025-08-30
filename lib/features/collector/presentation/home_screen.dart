@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_isp/features/auth/presentation/login_screen.dart';
 import 'package:smart_isp/features/profile/presentation/profile_page.dart';
 
 class CollectorHomePage extends StatefulWidget {
@@ -9,8 +8,7 @@ class CollectorHomePage extends StatefulWidget {
   State<CollectorHomePage> createState() => _CollectorHomePageState();
 }
 
-class _CollectorHomePageState extends State<CollectorHomePage>
-    with SingleTickerProviderStateMixin {
+class _CollectorHomePageState extends State<CollectorHomePage> {
   String selectedMonth = "January";
   String selectedStatus = "All";
   String selectedDistance = "Near";
@@ -29,103 +27,174 @@ class _CollectorHomePageState extends State<CollectorHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Collector"),
-        centerTitle: true,
-        backgroundColor: Colors.lightBlue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            // 🔍 Search bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Search client...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+      backgroundColor: Colors.grey[200],
+
+      body: Column(
+        children: [
+          // 🔵 Blue Header Section
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
             ),
-            const SizedBox(height: 12),
-
-            // ⏬ Filters Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildDropdown("Month", ["January", "February", "March"],
-                    selectedMonth, (val) {
-                      setState(() => selectedMonth = val!);
-                    }),
-                const SizedBox(width: 8),
-                _buildDropdown(
-                    "Status", ["All", "Paid", "Unpaid"], selectedStatus, (val) {
+                const Text(
+                  "Collector",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // 🔍 Search Bar
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search (Name or Phone)",
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // ⏬ Dropdown Filters
+                _buildDropdown("Filter by Month", ["January", "February", "March"], selectedMonth, (val) {
+                  setState(() => selectedMonth = val!);
+                }),
+                const SizedBox(height: 12),
+                _buildDropdown("Filter by Status", ["All", "Paid", "Unpaid"], selectedStatus, (val) {
                   setState(() => selectedStatus = val!);
                 }),
-                const SizedBox(width: 8),
-                _buildDropdown(
-                    "Distance", ["Near", "Far"], selectedDistance, (val) {
+                const SizedBox(height: 12),
+                _buildDropdown("Filter by Distance", ["Near", "Far"], selectedDistance, (val) {
                   setState(() => selectedDistance = val!);
                 }),
+                const SizedBox(height: 16),
+
+                // 📊 Paid/Unpaid Counter
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[700],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [
+                      Text("Paid: 0", style: TextStyle(color: Colors.white, fontSize: 16)),
+                      Text("Unpaid: 0", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    ],
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+          ),
 
-            // 📋 Client List
-            Expanded(
-              child: ListView.builder(
-                itemCount: clients.length,
-                itemBuilder: (context, index) {
-                  final client = clients[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 3,
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: client["status"] == "Paid"
-                            ? Colors.green
-                            : Colors.red,
-                        child: Icon(
-                          client["status"] == "Paid"
-                              ? Icons.check
-                              : Icons.close,
-                          color: Colors.white,
+          const SizedBox(height: 12),
+
+          // 📋 Client List
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: clients.length,
+              itemBuilder: (context, index) {
+                final client = clients[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Left Side Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(client["name"],
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.sim_card_rounded, size: 16, color: Colors.black54),
+                                const SizedBox(width: 4),
+                                const Text("DITO: 09XXXXXXXX",
+                                    style: TextStyle(fontSize: 14, color: Colors.black54)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(Icons.warning,
+                                    size: 16,
+                                    color: client["status"] == "Paid" ? Colors.green : Colors.red),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Status: ${client["status"]}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: client["status"] == "Paid" ? Colors.green : Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on, size: 16, color: Colors.blue),
+                                const SizedBox(width: 4),
+                                Text("${client["distance"]} Away",
+                                    style: const TextStyle(fontSize: 14, color: Colors.blue)),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      title: Text(client["name"]),
-                      subtitle:
-                      Text("${client["status"]} • ${client["distance"]}"),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        // 👉 Navigate to Client Details
-                        // Navigator.pushNamed(context, "/client_details");
-                      },
-                    ),
-                  );
-                },
-              ),
+                      const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black54),
+                    ],
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
 
-      // ✅ Floating Action Button with 4 expanding buttons
+      // ✅ Floating Action Button (Menu)
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 50.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_isFabOpen) ...[
-              _buildMiniFab(Icons.map, "Add Client", () {
-                debugPrint("Add Client tapped");
+              _buildMiniFab(Icons.map, "Map Client", () {
+                debugPrint(" Map Client tapped");
               }),
               const SizedBox(height: 10),
-              _buildMiniFab(Icons.restart_alt, "Payments", () {
-                debugPrint("Payments tapped");
+              _buildMiniFab(Icons.restart_alt, "Reboot", () {
+                debugPrint("Reboot tapped");
               }),
               const SizedBox(height: 10),
               _buildMiniFab(Icons.person, "Profile", () {
@@ -135,8 +204,8 @@ class _CollectorHomePageState extends State<CollectorHomePage>
                 );
               }),
               const SizedBox(height: 10),
-              _buildMiniFab(Icons.print, "Settings", () {
-                debugPrint("Settings tapped");
+              _buildMiniFab(Icons.print, "Print", () {
+                debugPrint("Print tapped");
               }),
               const SizedBox(height: 16),
             ],
@@ -163,34 +232,30 @@ class _CollectorHomePageState extends State<CollectorHomePage>
     );
   }
 
-  // 🔽 Reusable Dropdown widget
-  Widget _buildDropdown(String label, List<String> items, String value,
-      Function(String?) onChanged) {
-    return Expanded(
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        ),
-        items: items
-            .map((item) =>
-            DropdownMenuItem(value: item, child: Text(item)))
-            .toList(),
-        onChanged: onChanged,
+  // 🔽 Reusable Dropdown
+  Widget _buildDropdown(
+      String hint, List<String> items, String value, Function(String?) onChanged) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
+      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      onChanged: onChanged,
     );
   }
 
-  // 🔹 Reusable Mini FAB button
+  // 🔹 Reusable Mini FAB
   Widget _buildMiniFab(IconData icon, String tooltip, VoidCallback onPressed) {
     return SizedBox(
       width: 55,
       height: 55,
       child: FloatingActionButton(
-        heroTag: tooltip, // unique heroTag
+        heroTag: tooltip,
         mini: true,
         onPressed: onPressed,
         backgroundColor: Colors.lightBlue,

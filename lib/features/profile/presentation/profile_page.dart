@@ -165,7 +165,7 @@ class _ProfileState extends State<Profile> {
                 icon: Icon(Icons.logout, color: Colors.white),
                 label: Text("Log Out"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 247, 139, 139),
+                  backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
                   shape: RoundedRectangleBorder(
