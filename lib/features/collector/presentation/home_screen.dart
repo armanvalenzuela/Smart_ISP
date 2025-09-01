@@ -71,13 +71,15 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                 const SizedBox(height: 12),
 
                 // ⏬ Dropdown Filters
-                _buildDropdown("Filter by Month", ["January", "February", "March"], selectedMonth, (val) {
-                  setState(() => selectedMonth = val!);
-                }),
+                _buildDropdown("Filter by Month", ["January", "February", "March"], selectedMonth,
+                        (val) {
+                      setState(() => selectedMonth = val!);
+                    }),
                 const SizedBox(height: 12),
-                _buildDropdown("Filter by Status", ["All", "Paid", "Unpaid"], selectedStatus, (val) {
-                  setState(() => selectedStatus = val!);
-                }),
+                _buildDropdown("Filter by Status", ["All", "Paid", "Unpaid"], selectedStatus,
+                        (val) {
+                      setState(() => selectedStatus = val!);
+                    }),
                 const SizedBox(height: 12),
                 _buildDropdown("Filter by Distance", ["Near", "Far"], selectedDistance, (val) {
                   setState(() => selectedDistance = val!);
@@ -94,8 +96,10 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [
-                      Text("Paid: 0", style: TextStyle(color: Colors.white, fontSize: 16)),
-                      Text("Unpaid: 0", style: TextStyle(color: Colors.white, fontSize: 16)),
+                      Text("Paid: 0",
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      Text("Unpaid: 0",
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
                     ],
                   ),
                 ),
@@ -112,68 +116,82 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
               itemCount: clients.length,
               itemBuilder: (context, index) {
                 final client = clients[index];
-                return Container(
+                return Card(
                   margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
                   ),
-                  child: Row(
-                    children: [
-                      // Left Side Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(client["name"],
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 4),
-                            Row(
+                  elevation: 3,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      // For now just tappable, no navigation
+                      debugPrint("${client["name"]} tapped");
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          // Left Side Info
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.sim_card_rounded, size: 16, color: Colors.black54),
-                                const SizedBox(width: 4),
-                                const Text("DITO: 09XXXXXXXX",
-                                    style: TextStyle(fontSize: 14, color: Colors.black54)),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(Icons.warning,
-                                    size: 16,
-                                    color: client["status"] == "Paid" ? Colors.green : Colors.red),
-                                const SizedBox(width: 4),
-                                Text(
-                                  "Status: ${client["status"]}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: client["status"] == "Paid" ? Colors.green : Colors.red,
-                                  ),
+                                Text(client["name"],
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: const [
+                                    Icon(Icons.sim_card_rounded,
+                                        size: 16, color: Colors.black54),
+                                    SizedBox(width: 4),
+                                    Text("DITO: 09XXXXXXXX",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black54)),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(Icons.warning,
+                                        size: 16,
+                                        color: client["status"] == "Paid"
+                                            ? Colors.green
+                                            : Colors.red),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "Status: ${client["status"]}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: client["status"] == "Paid"
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.location_on,
+                                        size: 16, color: Colors.blue),
+                                    const SizedBox(width: 4),
+                                    Text("${client["distance"]} Away",
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.blue)),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                const Icon(Icons.location_on, size: 16, color: Colors.blue),
-                                const SizedBox(width: 4),
-                                Text("${client["distance"]} Away",
-                                    style: const TextStyle(fontSize: 14, color: Colors.blue)),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios,
+                              size: 18, color: Colors.black54),
+                        ],
                       ),
-                      const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black54),
-                    ],
+                    ),
                   ),
                 );
               },
@@ -242,9 +260,11 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items:
+      items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
       onChanged: onChanged,
     );
   }

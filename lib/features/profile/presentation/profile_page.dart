@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// A simple FeatureCard widget definition
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
