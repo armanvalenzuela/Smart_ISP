@@ -90,7 +90,6 @@ class _ClientDetailsState extends State<ClientDetails> {
 
             const SizedBox(height: 30),
 
-            // View on Map Button
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -112,7 +111,6 @@ class _ClientDetailsState extends State<ClientDetails> {
 
             const SizedBox(height: 16),
 
-            // Pay Now Button
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,

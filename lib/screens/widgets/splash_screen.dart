@@ -23,15 +23,13 @@ class _SplashScreenState extends State<SplashScreen>
       duration: Duration(seconds: 2),
     );
 
-    // Slide animation (from bottom to center with bounce effect)
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 1), // starts below the screen
-      end: Offset(0, 0),   // ends at center
+      begin: Offset(0, 1),
+      end: Offset(0, 0),
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.bounceOut),
     );
 
-    // Fade animation (for smooth appearance)
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeIn,
@@ -39,7 +37,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Auto navigate after 3 seconds
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/login');
     });
@@ -57,13 +54,12 @@ class _SplashScreenState extends State<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background image
           Image.asset(
             "assets/login_bg.png",
             fit: BoxFit.cover,
           ),
 
-          // Centered animated text
+
           Center(
             child: SlideTransition(
               position: _slideAnimation,
@@ -75,6 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       "SMART TELECOM",
                       style: TextStyle(
+                        fontFamily: 'Poppins',
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

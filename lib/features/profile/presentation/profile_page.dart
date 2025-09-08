@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_isp/features/auth/presentation/login_screen.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -38,6 +39,7 @@ class _ProfileState extends State<Profile> {
         title: const Text("Profile"),
         titleTextStyle: const TextStyle(
           fontSize: 22,
+          fontFamily: 'Poppins',
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -50,10 +52,8 @@ class _ProfileState extends State<Profile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Profile Card (Clickable)
             InkWell(
               onTap: () {
-                // Handle profile card tap
               },
               borderRadius: BorderRadius.circular(10),
               child: Card(
@@ -100,10 +100,8 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 12),
 
-            // Date Card (Clickable)
             InkWell(
               onTap: () {
-                // Handle date card tap
               },
               borderRadius: BorderRadius.circular(10),
               child: Card(
@@ -157,7 +155,6 @@ class _ProfileState extends State<Profile> {
             FeatureCard(icon: Icons.print, title: "Default Printer"),
             SizedBox(height: 35),
 
-            // Logout button
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {},
@@ -180,7 +177,6 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  // ✅ Helper widget for each option row
   Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
@@ -194,7 +190,6 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  // ✅ Logout Confirmation Dialog
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -210,8 +205,7 @@ class _ProfileState extends State<Profile> {
             onPressed: () {
               Navigator.of(ctx).pop();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Placeholder()),
-                // Replace Placeholder with LoginScreen
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             child: const Text("LogOut", style: TextStyle(color: Colors.red)),

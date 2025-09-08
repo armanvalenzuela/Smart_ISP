@@ -31,7 +31,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
 
       body: Column(
         children: [
-          // 🔵 Blue Header Section
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             decoration: const BoxDecoration(
@@ -48,13 +47,13 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   "Collector",
                   style: TextStyle(
                     color: Colors.white,
+                    fontFamily: 'Poppins',
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 12),
 
-                // 🔍 Search Bar
                 TextField(
                   decoration: InputDecoration(
                     hintText: "Search (Name or Phone)",
@@ -70,7 +69,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                 ),
                 const SizedBox(height: 12),
 
-                // ⏬ Dropdown Filters
                 _buildDropdown("Filter by Month", ["January", "February", "March"], selectedMonth,
                         (val) {
                       setState(() => selectedMonth = val!);
@@ -86,7 +84,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                 }),
                 const SizedBox(height: 16),
 
-                // 📊 Paid/Unpaid Counter
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
@@ -109,7 +106,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
 
           const SizedBox(height: 12),
 
-          // 📋 Client List
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -125,14 +121,12 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      // For now just tappable, no navigation
                       debugPrint("${client["name"]} tapped");
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Row(
                         children: [
-                          // Left Side Info
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +141,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                                     Icon(Icons.sim_card_rounded,
                                         size: 16, color: Colors.black54),
                                     SizedBox(width: 4),
-                                    Text("DITO: 09XXXXXXXX",
+                                    Text("DITO: 09*******76",
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black54)),
@@ -200,7 +194,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
         ],
       ),
 
-      // ✅ Floating Action Button (Menu)
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 50.0),
         child: Column(
@@ -250,7 +243,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     );
   }
 
-  // 🔽 Reusable Dropdown
   Widget _buildDropdown(
       String hint, List<String> items, String value, Function(String?) onChanged) {
     return DropdownButtonFormField<String>(
@@ -269,7 +261,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     );
   }
 
-  // 🔹 Reusable Mini FAB
   Widget _buildMiniFab(IconData icon, String tooltip, VoidCallback onPressed) {
     return SizedBox(
       width: 55,

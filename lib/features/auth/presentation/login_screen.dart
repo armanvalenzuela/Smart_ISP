@@ -16,15 +16,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Dummy user
-  final String dummyEmail = "test@smartisp.com";
-  final String dummyPassword = "123456";
+  //Admin
+  final String Email = "admin";
+  final String Password = "123456";
 
   void _login() {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    if (email == dummyEmail && password == dummyPassword) {
+    if (email == Email && password == Password) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const CollectorHomePage()),
@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         child: Container(
-          color: Colors.black.withOpacity(0),
+          color: Colors.black.withValues(),
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,21 +57,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 "Welcome!",
                 style: TextStyle(
                   fontSize: 35,
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
+
               const SizedBox(height: 5),
+
               const Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: Text(
                   "Login to Continue",
-                  style: TextStyle(fontSize: 18, color: Colors.white70),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Poppins',
+                      color: Colors.white70,
+                  ),
                 ),
               ),
+
               const SizedBox(height: 70),
 
-              // Email
               Center(
                 child: SizedBox(
                   height: 50,
@@ -90,10 +97,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 15),
 
-
-              // Password with toggle
               Center(
                 child: SizedBox(
                   height: 50,
@@ -125,9 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 10),
 
-
               const SizedBox(height: 30),
-              // Login button
               Center(
                 child: ElevatedButton(
                   onPressed: _login,
@@ -140,12 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: const Text(
                     "Login",
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 25),
-
 
               const Spacer(),
               const Center(

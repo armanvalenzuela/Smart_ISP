@@ -2,6 +2,6 @@
 
 import 'package:smart_isp/features/clients/data//models/client_model.dart';
 
-List<ClientModel> dummyClients = [
+List<ClientModel> Clients = [
 
 ];
