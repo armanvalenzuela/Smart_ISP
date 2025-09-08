@@ -76,6 +76,7 @@ class _ProfileState extends State<Profile> {
                           Text(
                             "John Doe",
                             style: TextStyle(
+                              fontFamily: 'Poppins',
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
@@ -89,7 +90,9 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Assigned Town:  Manila, Philippines",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(
+                                fontSize: 15,
+                            ),
                           ),
                         ],
                       ),
@@ -129,6 +132,7 @@ class _ProfileState extends State<Profile> {
                             "Select Date: YY-MM-DD",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins',
                               fontSize: 18,
                             ),
                           ),
@@ -141,7 +145,9 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Clients Collected: on November 20, 2023",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(
+                                fontSize: 15,
+                            ),
                           ),
                         ],
                       ),
@@ -157,9 +163,16 @@ class _ProfileState extends State<Profile> {
 
             Center(
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => _showLogoutDialog(context),
                 icon: Icon(Icons.logout, color: Colors.white),
-                label: Text("Log Out"),
+                label: const Text(
+                    "Log Out",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -177,38 +190,55 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
-      onTap: onTap,
-    );
-  }
-
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("LogOut"),
-        content: const Text("Are you sure you want to logout?"),
+        title: const Text(
+            "Log Out?",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        content: const Text(
+            "Are you sure you want to logout?",
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("Cancel"),
+            child: const Text(
+                "Cancel",
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                color: Colors.lightBlue,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              Navigator.of(context).pushReplacement(
+              Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (Route<dynamic> route) => false,
               );
             },
-            child: const Text("LogOut", style: TextStyle(color: Colors.red)),
+            child: const Text(
+              "Log Out",
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),

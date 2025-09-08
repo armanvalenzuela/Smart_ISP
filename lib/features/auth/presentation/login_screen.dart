@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         child: Container(
-          color: Colors.black.withValues(),
+          color: Colors.black.withOpacity(0),
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +85,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 300,
                   child: TextField(
                     controller: _emailController,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
                     decoration: InputDecoration(
                       hintText: "Email",
                       filled: true,
@@ -107,6 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
                     decoration: InputDecoration(
                       hintText: "Password",
                       filled: true,
@@ -146,7 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Login",
                     style: TextStyle(
                         color: Colors.black,
-                        fontSize: 16
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
                     ),
                   ),
                 ),
