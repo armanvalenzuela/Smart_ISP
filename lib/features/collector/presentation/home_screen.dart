@@ -54,49 +54,64 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                 ),
                 const SizedBox(height: 12),
 
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search (Name or Phone)",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide.none,
+                SizedBox(
+                  height: 44,
+                  child: TextField(
+                    textAlignVertical: TextAlignVertical.center,
+                    style: const TextStyle(fontSize: 14),
+                    decoration: InputDecoration(
+                      hintText: "Search (Name or Phone)",
+                      prefixIcon: const Icon(Icons.search, size: 20),
+                      prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                      filled: true,
+                      fillColor: Colors.white,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 12),
 
                 _buildDropdown("Filter by Month", ["January", "February", "March"], selectedMonth,
                         (val) {
-                      setState(() => selectedMonth = val!);
+                      setState(() => selectedMonth = val);
                     }),
                 const SizedBox(height: 12),
                 _buildDropdown("Filter by Status", ["All", "Paid", "Unpaid"], selectedStatus,
                         (val) {
-                      setState(() => selectedStatus = val!);
+                      setState(() => selectedStatus = val);
                     }),
                 const SizedBox(height: 12),
                 _buildDropdown("Filter by Distance", ["Near", "Far"], selectedDistance, (val) {
-                  setState(() => selectedDistance = val!);
+                  setState(() => selectedDistance = val);
                 }),
                 const SizedBox(height: 16),
 
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 0),
                   decoration: BoxDecoration(
-                    color: Colors.blue[700],
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [
                       Text("Paid: 0",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                       Text("Unpaid: 0",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -150,11 +165,15 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                                 const SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(Icons.warning,
-                                        size: 16,
-                                        color: client["status"] == "Paid"
-                                            ? Colors.green
-                                            : Colors.red),
+                                    Icon(
+                                      client["status"] == "Paid"
+                                          ? Icons.check_circle
+                                          : Icons.cancel,
+                                      size: 16,
+                                      color: client["status"] == "Paid"
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       "Status: ${client["status"]}",
@@ -244,20 +263,57 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
   }
 
   Widget _buildDropdown(
-      String hint, List<String> items, String value, Function(String?) onChanged) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      String hint, List<String> items, String value, Function(String) onSelected) {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                hint,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: items.map((item) {
+                  return ListTile(
+                    title: Text(item, style: const TextStyle(fontFamily: 'Poppins')),
+                    onTap: () {
+                      Navigator.of(ctx).pop();
+                      setState(() {
+                        onSelected(item);
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            );
+          },
+        );
+      },
+      child: InputDecorator(
+        decoration: InputDecoration(
+          hintText: hint,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(value, style: const TextStyle(fontSize: 14, fontFamily: 'Poppins')),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
       ),
-      items:
-      items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
-      onChanged: onChanged,
     );
   }
 

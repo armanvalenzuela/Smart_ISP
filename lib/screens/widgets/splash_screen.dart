@@ -82,6 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       "Client",
                       style: TextStyle(
+                        fontFamily: 'Poppins',
                         fontSize: 20,
                         color: Colors.white70,
                       ),
