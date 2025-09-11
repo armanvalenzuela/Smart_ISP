@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smart_isp/features/clients/presentation/screens/client_payment.dart';
+import 'package:smart_isp/features/collector/map_screen.dart';
 
 class ClientDetails extends StatefulWidget {
   const ClientDetails({super.key});
@@ -101,7 +103,12 @@ class _ClientDetailsState extends State<ClientDetails> {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapScreen()),
+                );
+              },
               icon: const Icon(Icons.map),
               label: const Text(
                 "View on Map",
@@ -122,7 +129,12 @@ class _ClientDetailsState extends State<ClientDetails> {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Payment()),
+                );
+              },
               icon: const Icon(Icons.payment),
               label: const Text(
                 "Pay Now",

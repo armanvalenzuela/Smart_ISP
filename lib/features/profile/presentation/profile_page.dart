@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/auth/presentation/login_screen.dart';
+import 'package:smart_isp/features/clients/presentation/screens/client_details.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -54,6 +55,12 @@ class _ProfileState extends State<Profile> {
           children: [
             InkWell(
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ClientDetails(),
+                  ),
+                );
               },
               borderRadius: BorderRadius.circular(10),
               child: Card(
@@ -90,9 +97,7 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Assigned Town:  Manila, Philippines",
-                            style: TextStyle(
-                                fontSize: 15,
-                            ),
+                            style: TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
@@ -101,61 +106,56 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ),
+
             SizedBox(height: 12),
 
-            InkWell(
-              onTap: () {
-              },
-              borderRadius: BorderRadius.circular(10),
-              child: Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 18,
-                    horizontal: 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: const [
-                          Icon(
-                            Icons.calendar_month,
-                            color: Colors.black87,
-                            size: 22,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        Icon(
+                          Icons.calendar_month,
+                          color: Colors.black87,
+                          size: 22,
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          "Select Date: YY-MM-DD",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
                           ),
-                          SizedBox(width: 12),
-                          Text(
-                            "Select Date: YY-MM-DD",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 18),
-                      Row(
-                        children: const [
-                          Icon(Icons.people, color: Colors.black87, size: 22),
-                          SizedBox(width: 12),
-                          Text(
-                            "Clients Collected: on November 20, 2023",
-                            style: TextStyle(
-                                fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 18),
+                    Row(
+                      children: const [
+                        Icon(Icons.people, color: Colors.black87, size: 22),
+                        SizedBox(width: 12),
+                        Text(
+                          "Clients Collected: on November 20, 2023",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
+
             SizedBox(height: 12),
 
             FeatureCard(icon: Icons.print, title: "Default Printer"),
@@ -166,7 +166,7 @@ class _ProfileState extends State<Profile> {
                 onPressed: () => _showLogoutDialog(context),
                 icon: Icon(Icons.logout, color: Colors.white),
                 label: const Text(
-                    "Log Out",
+                  "Log Out",
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
@@ -195,7 +195,7 @@ class _ProfileState extends State<Profile> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text(
-            "Log Out?",
+          "Log Out?",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'Poppins',
@@ -204,17 +204,14 @@ class _ProfileState extends State<Profile> {
           ),
         ),
         content: const Text(
-            "Are you sure you want to logout?",
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 16,
-          ),
+          "Are you sure you want to logout?",
+          style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text(
-                "Cancel",
+              "Cancel",
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
@@ -227,7 +224,7 @@ class _ProfileState extends State<Profile> {
               Navigator.of(ctx).pop();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
               );
             },
             child: const Text(
