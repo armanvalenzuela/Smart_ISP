@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/collector/map_screen.dart';
 import 'package:smart_isp/features/profile/presentation/profile_page.dart';
+import 'package:smart_isp/features/clients/presentation/screens/client_details.dart';
 
 class CollectorHomePage extends StatefulWidget {
   const CollectorHomePage({super.key});
@@ -11,8 +12,10 @@ class CollectorHomePage extends StatefulWidget {
 
 class _CollectorHomePageState extends State<CollectorHomePage> {
   String selectedStatus = "All";
-
+  String searchQuery = "";
   bool _isFabOpen = false;
+
+  final TextEditingController _searchController = TextEditingController();
 
   final List<Map<String, dynamic>> clients = [
     {"name": "Juan Dela Cruz", "status": "Active", "distance": "200m"},
@@ -22,12 +25,16 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     {"name": "Emilio Jacinto", "status": "Active", "distance": "3.7km"},
     {"name": "Diana Cortez", "status": "Inactive", "distance": "1.2km"},
   ];
-
+  
   @override
   Widget build(BuildContext context) {
-    final filteredClients = selectedStatus == "All"
-        ? clients
-        : clients.where((c) => c["status"] == selectedStatus).toList();
+    final filteredClients = clients.where((c) {
+      final matchesStatus =
+          selectedStatus == "All" || c["status"] == selectedStatus;
+      final matchesSearch =
+      c["name"].toLowerCase().contains(searchQuery.toLowerCase());
+      return matchesStatus && matchesSearch;
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -35,7 +42,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
             decoration: const BoxDecoration(
               color: Colors.blue,
               borderRadius: BorderRadius.only(
@@ -62,7 +69,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                     Expanded(
                       flex: 2,
                       child: SizedBox(
-                        height: 44,
+                        height: 36,
                         child: TextField(
                           textAlignVertical: TextAlignVertical.center,
                           style: const TextStyle(
@@ -71,10 +78,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                           ),
                           decoration: InputDecoration(
                             hintText: "Search",
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              size: 20,
-                            ),
+                            prefixIcon: const Icon(Icons.search, size: 20),
                             prefixIconConstraints: const BoxConstraints(
                               minWidth: 40,
                               minHeight: 40,
@@ -98,11 +102,11 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                     const SizedBox(width: 10),
 
                     Expanded(
-                      flex: 1,
+                      flex: 0,
                       child: SizedBox(
-                        height: 44,
+                        height: 40,
                         child: _buildDropdown(
-                          "Filter by Status",
+                          "Status",
                           ["All", "Active", "Inactive"],
                           selectedStatus,
                               (val) {
@@ -164,6 +168,12 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ClientDetails(),
+                        ),
+                      );
                       debugPrint("${client["name"]} tapped");
                     },
                     child: Padding(
@@ -340,9 +350,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   return ListTile(
                     title: Text(
                       item,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                      ),
+                      style: const TextStyle(fontFamily: 'Poppins'),
                     ),
                     onTap: () {
                       Navigator.of(ctx).pop();

@@ -95,7 +95,7 @@ class Payment extends StatelessWidget {
             const SizedBox(height: 24),
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                labelText: "Select month to pay",
+                labelText: "Select month",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -117,7 +117,7 @@ class Payment extends StatelessWidget {
                 backgroundColor: Colors.lightBlue,
                 padding: const EdgeInsets.symmetric(
                   vertical: 14,
-                  horizontal: 24,
+                  horizontal: 20,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -128,7 +128,7 @@ class Payment extends StatelessWidget {
               },
               icon: const Icon(Icons.payments, color: Colors.white),
               label: const Text(
-                "Submit Payment",
+                "Payments Received",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

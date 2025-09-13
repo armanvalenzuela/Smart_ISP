@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/auth/presentation/login_screen.dart';
-import 'package:smart_isp/features/clients/presentation/screens/client_details.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -54,14 +53,6 @@ class _ProfileState extends State<Profile> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ClientDetails(),
-                  ),
-                );
-              },
               borderRadius: BorderRadius.circular(10),
               child: Card(
                 elevation: 2,

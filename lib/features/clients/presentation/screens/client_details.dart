@@ -137,7 +137,7 @@ class _ClientDetailsState extends State<ClientDetails> {
               },
               icon: const Icon(Icons.payment),
               label: const Text(
-                "Pay Now",
+                "Payments",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
