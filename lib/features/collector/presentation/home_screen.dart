@@ -10,23 +10,25 @@ class CollectorHomePage extends StatefulWidget {
 }
 
 class _CollectorHomePageState extends State<CollectorHomePage> {
-  String selectedMonth = "January";
   String selectedStatus = "All";
-  String selectedDistance = "Near";
 
   bool _isFabOpen = false;
 
   final List<Map<String, dynamic>> clients = [
-    {"name": "Juan Dela Cruz", "status": "Paid", "distance": "200m"},
-    {"name": "Maria Santos", "status": "Unpaid", "distance": "500m"},
-    {"name": "Pedro Gomez", "status": "Unpaid", "distance": "1.2km"},
-    {"name": "Andres Bonifacio", "status": "Paid", "distance": "1.5km"},
-    {"name": "Emilio Jacinto", "status": "Paid", "distance": "3.7km"},
-    {"name": "Diana Cortez", "status": "Unpaid", "distance": "1.2km"},
+    {"name": "Juan Dela Cruz", "status": "Active", "distance": "200m"},
+    {"name": "Maria Santos", "status": "Inactive", "distance": "500m"},
+    {"name": "Pedro Gomez", "status": "Inactive", "distance": "1.2km"},
+    {"name": "Andres Bonifacio", "status": "Active", "distance": "1.5km"},
+    {"name": "Emilio Jacinto", "status": "Active", "distance": "3.7km"},
+    {"name": "Diana Cortez", "status": "Inactive", "distance": "1.2km"},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final filteredClients = selectedStatus == "All"
+        ? clients
+        : clients.where((c) => c["status"] == selectedStatus).toList();
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
 
@@ -55,61 +57,63 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                 ),
                 const SizedBox(height: 12),
 
-                SizedBox(
-                  height: 44,
-                  child: TextField(
-                    textAlignVertical: TextAlignVertical.center,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: "Search (Name or Phone)",
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      prefixIconConstraints: const BoxConstraints(
-                        minWidth: 40,
-                        minHeight: 40,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 44,
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Search",
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              size: 20,
+                            ),
+                            prefixIconConstraints: const BoxConstraints(
+                              minWidth: 40,
+                              minHeight: 40,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0,
+                              horizontal: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 44,
+                        child: _buildDropdown(
+                          "Filter by Status",
+                          ["All", "Active", "Inactive"],
+                          selectedStatus,
+                              (val) {
+                            setState(() => selectedStatus = val);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(height: 12),
-
-                _buildDropdown(
-                  "Filter by Month",
-                  ["January", "February", "March"],
-                  selectedMonth,
-                  (val) {
-                    setState(() => selectedMonth = val);
-                  },
-                ),
-                const SizedBox(height: 12),
-                _buildDropdown(
-                  "Filter by Status",
-                  ["All", "Paid", "Unpaid"],
-                  selectedStatus,
-                  (val) {
-                    setState(() => selectedStatus = val);
-                  },
-                ),
-                const SizedBox(height: 12),
-                _buildDropdown(
-                  "Filter by Distance",
-                  ["Near", "Far"],
-                  selectedDistance,
-                  (val) {
-                    setState(() => selectedDistance = val);
-                  },
-                ),
                 const SizedBox(height: 16),
 
                 Container(
@@ -122,11 +126,19 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                     children: const [
                       Text(
                         "Paid: 0",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                        ),
                       ),
                       Text(
                         "Unpaid: 0",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),
@@ -140,9 +152,9 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: clients.length,
+              itemCount: filteredClients.length,
               itemBuilder: (context, index) {
-                final client = clients[index];
+                final client = filteredClients[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 10),
                   shape: RoundedRectangleBorder(
@@ -191,11 +203,11 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                                 Row(
                                   children: [
                                     Icon(
-                                      client["status"] == "Paid"
+                                      client["status"] == "Active"
                                           ? Icons.check_circle
                                           : Icons.cancel,
                                       size: 16,
-                                      color: client["status"] == "Paid"
+                                      color: client["status"] == "Active"
                                           ? Colors.green
                                           : Colors.red,
                                     ),
@@ -204,7 +216,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                                       "Status: ${client["status"]}",
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: client["status"] == "Paid"
+                                        color: client["status"] == "Active"
                                             ? Colors.green
                                             : Colors.red,
                                       ),
@@ -301,11 +313,11 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
   }
 
   Widget _buildDropdown(
-    String hint,
-    List<String> items,
-    String value,
-    Function(String) onSelected,
-  ) {
+      String hint,
+      List<String> items,
+      String value,
+      Function(String) onSelected,
+      ) {
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -328,7 +340,9 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   return ListTile(
                     title: Text(
                       item,
-                      style: const TextStyle(fontFamily: 'Poppins'),
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                      ),
                     ),
                     onTap: () {
                       Navigator.of(ctx).pop();
@@ -343,25 +357,31 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
           },
         );
       },
-      child: InputDecorator(
-        decoration: InputDecoration(
-          hintText: hint,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 10,
-          ),
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.grey.shade400, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              value,
-              style: const TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+              value.isEmpty ? hint : value,
+              style: const TextStyle(
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                color: Colors.black87,
+              ),
             ),
-            const Icon(Icons.arrow_drop_down),
+            const Icon(
+              Icons.keyboard_arrow_down,
+              size: 20,
+              color: Colors.black54,
+            ),
           ],
         ),
       ),
