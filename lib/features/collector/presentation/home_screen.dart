@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/collector/map_screen.dart';
 import 'package:smart_isp/features/profile/presentation/profile_page.dart';
+import 'package:smart_isp/features/clients/presentation/screens/client_details.dart';
 
 class CollectorHomePage extends StatefulWidget {
   const CollectorHomePage({super.key});
@@ -71,10 +72,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                           ),
                           decoration: InputDecoration(
                             hintText: "Search",
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              size: 20,
-                            ),
+                            prefixIcon: const Icon(Icons.search, size: 20),
                             prefixIconConstraints: const BoxConstraints(
                               minWidth: 40,
                               minHeight: 40,
@@ -100,12 +98,12 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                     Expanded(
                       flex: 1,
                       child: SizedBox(
-                        height: 44,
+                        height: 42,
                         child: _buildDropdown(
                           "Filter by Status",
                           ["All", "Active", "Inactive"],
                           selectedStatus,
-                              (val) {
+                          (val) {
                             setState(() => selectedStatus = val);
                           },
                         ),
@@ -164,6 +162,12 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ClientDetails(),
+                        ),
+                      );
                       debugPrint("${client["name"]} tapped");
                     },
                     child: Padding(
@@ -313,11 +317,11 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
   }
 
   Widget _buildDropdown(
-      String hint,
-      List<String> items,
-      String value,
-      Function(String) onSelected,
-      ) {
+    String hint,
+    List<String> items,
+    String value,
+    Function(String) onSelected,
+  ) {
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -340,9 +344,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   return ListTile(
                     title: Text(
                       item,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                      ),
+                      style: const TextStyle(fontFamily: 'Poppins'),
                     ),
                     onTap: () {
                       Navigator.of(ctx).pop();
