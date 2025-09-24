@@ -13,7 +13,7 @@ class CollectorHomePage extends StatefulWidget {
 class _CollectorHomePageState extends State<CollectorHomePage> {
   String selectedStatus = "All";
   String searchQuery = "";
-  bool _isFabOpen = false;
+  int _currentIndex = 0;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -25,7 +25,16 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     {"name": "Emilio Jacinto", "status": "Active", "distance": "3.7km"},
     {"name": "Diana Cortez", "status": "Inactive", "distance": "1.2km"},
   ];
-  
+
+  Future<void> _refreshClients() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      searchQuery = "";
+      selectedStatus = "All";
+      _searchController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredClients = clients.where((c) {
@@ -71,6 +80,12 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                       child: SizedBox(
                         height: 36,
                         child: TextField(
+                          controller: _searchController,
+                          onChanged: (value){
+                            setState(() {
+                              searchQuery = value;
+                            });
+                          },
                           textAlignVertical: TextAlignVertical.center,
                           style: const TextStyle(
                             fontSize: 14,
@@ -154,170 +169,167 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
           const SizedBox(height: 12),
 
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: filteredClients.length,
-              itemBuilder: (context, index) {
-                final client = filteredClients[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 3,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ClientDetails(),
-                        ),
-                      );
-                      debugPrint("${client["name"]} tapped");
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  client["name"],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.sim_card_rounded,
-                                      size: 16,
-                                      color: Colors.black54,
+            child: RefreshIndicator(
+              onRefresh: _refreshClients,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: filteredClients.length,
+                itemBuilder: (context, index) {
+                  final client = filteredClients[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 3,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ClientDetails(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    client["name"],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      "DITO: 09*******76",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: const [
+                                      Icon(
+                                        Icons.sim_card_rounded,
+                                        size: 16,
                                         color: Colors.black54,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      client["status"] == "Active"
-                                          ? Icons.check_circle
-                                          : Icons.cancel,
-                                      size: 16,
-                                      color: client["status"] == "Active"
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "Status: ${client["status"]}",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "DITO: 09*******76",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        client["status"] == "Active"
+                                            ? Icons.check_circle
+                                            : Icons.cancel,
+                                        size: 16,
                                         color: client["status"] == "Active"
                                             ? Colors.green
                                             : Colors.red,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      size: 16,
-                                      color: Colors.blue,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "${client["distance"]} Away",
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "Status: ${client["status"]}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: client["status"] == "Active"
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        size: 16,
                                         color: Colors.blue,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "${client["distance"]} Away",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 18,
-                            color: Colors.black54,
-                          ),
-                        ],
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Colors.black54,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],
       ),
 
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_isFabOpen) ...[
-              _buildMiniFab(Icons.map, "Map Client", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapScreen()),
-                );
-              }),
-              const SizedBox(height: 10),
-              _buildMiniFab(Icons.restart_alt, "Reboot", () {
-                debugPrint("Reboot tapped");
-              }),
-              const SizedBox(height: 10),
-              _buildMiniFab(Icons.person, "Profile", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Profile()),
-                );
-              }),
-              const SizedBox(height: 10),
-              _buildMiniFab(Icons.print, "Print", () {
-                debugPrint("Print tapped");
-              }),
-              const SizedBox(height: 16),
-            ],
-            SizedBox(
-              width: 70,
-              height: 70,
-              child: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _isFabOpen = !_isFabOpen;
-                  });
-                },
-                backgroundColor: Colors.blue,
-                child: Icon(
-                  _isFabOpen ? Icons.close : Icons.menu,
-                  color: Colors.white,
-                  size: 32,
-                ),
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapScreen()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Profile()),
+              );
+              break;
+            case 2:
+              //Placeholder ng print, so wala pang function yet
+              break;
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Map",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.print),
+            label: "Print",
+          ),
+        ],
       ),
     );
   }
@@ -392,20 +404,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildMiniFab(IconData icon, String tooltip, VoidCallback onPressed) {
-    return SizedBox(
-      width: 55,
-      height: 55,
-      child: FloatingActionButton(
-        heroTag: tooltip,
-        mini: true,
-        onPressed: onPressed,
-        backgroundColor: Colors.lightBlue,
-        child: Icon(icon, color: Colors.white, size: 26),
       ),
     );
   }

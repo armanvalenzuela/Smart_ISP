@@ -13,7 +13,15 @@ class MapScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Client Map"),
+        titleTextStyle: const TextStyle(
+          fontSize: 22,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        centerTitle: true,
         backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FlutterMap(
         options: MapOptions(initialCenter: manilaCoords, initialZoom: 13),
