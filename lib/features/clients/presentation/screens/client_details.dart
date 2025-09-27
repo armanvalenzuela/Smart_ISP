@@ -18,6 +18,7 @@ class _ClientDetailsState extends State<ClientDetails> {
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 22,
+          fontFamily: 'Poppins',
           fontWeight: FontWeight.bold,
         ),
         centerTitle: true,
@@ -48,14 +49,24 @@ class _ClientDetailsState extends State<ClientDetails> {
                 children: const [
                   Text(
                     "John Doe",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                    ),
                   ),
                   SizedBox(height: 10),
                   Row(
                     children: [
                       Icon(Icons.phone, size: 18),
                       SizedBox(width: 8),
-                      Text("DITO: 09XXXXXXXXX"),
+                      Text(
+                          "DITO: 09XXXXXXXXX",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -63,7 +74,13 @@ class _ClientDetailsState extends State<ClientDetails> {
                     children: [
                       Icon(Icons.wifi, size: 18),
                       SizedBox(width: 8),
-                      Text("Plan: 900Mbps - P1"),
+                      Text(
+                          "Plan: 900Mbps - P1",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -73,7 +90,11 @@ class _ClientDetailsState extends State<ClientDetails> {
                       SizedBox(width: 8),
                       Text(
                         "Status: Unpaid",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            color: Colors.red,
+                        ),
                       ),
                     ],
                   ),
@@ -83,7 +104,15 @@ class _ClientDetailsState extends State<ClientDetails> {
                     children: [
                       Icon(Icons.padding_sharp, size: 18),
                       SizedBox(width: 8),
-                      Expanded(child: Text("Remarks:")),
+                      Expanded(child:
+                      Text(
+                          "Remarks:",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                        ),
+                      ),
+                      ),
                     ],
                   ),
                 ],
@@ -92,55 +121,69 @@ class _ClientDetailsState extends State<ClientDetails> {
 
             const SizedBox(height: 30),
 
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black87,
-                shadowColor: Colors.black26,
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  shadowColor: Colors.black26,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapScreen()),
-                );
-              },
-              icon: const Icon(Icons.map),
-              label: const Text(
-                "View on Map",
-                style: TextStyle(fontWeight: FontWeight.w600),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MapScreen()),
+                  );
+                },
+                icon: const Icon(Icons.map),
+                label: const Text(
+                  "View on Map",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                  ),
+                ),
               ),
             ),
 
             const SizedBox(height: 16),
 
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                shadowColor: Colors.black26,
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Payment()),
-                );
-              },
-              icon: const Icon(Icons.payment),
-              label: const Text(
-                "Payments",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
+           FractionallySizedBox(
+             widthFactor: 0.7,
+             child: ElevatedButton.icon(
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: Colors.blue,
+                 foregroundColor: Colors.white,
+                 shadowColor: Colors.black26,
+                 elevation: 4,
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(30),
+                 ),
+                 padding: const EdgeInsets.symmetric(vertical: 14),
+               ),
+               onPressed: () {
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(builder: (context) => const Payment()),
+                 );
+               },
+               icon: const Icon(Icons.payment),
+               label: const Text(
+                 "Payments",
+                 style: TextStyle(
+                   fontWeight: FontWeight.w600,
+                   fontSize: 14,
+                   fontFamily: 'Poppins',
+                 ),
+               ),
+             ),
+           ),
           ],
         ),
       ),

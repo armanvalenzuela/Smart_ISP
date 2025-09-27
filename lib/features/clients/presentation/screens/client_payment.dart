@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 
-class Payment extends StatelessWidget {
+class Payment extends StatefulWidget {
   const Payment({super.key});
+
+  @override
+  State<Payment> createState() => _PaymentState();
+}
+
+class _PaymentState extends State<Payment> {
+  String? selectedMonth;
+
+  final List<String> months = const [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -10,6 +32,7 @@ class Payment extends StatelessWidget {
         title: const Text('Payment'),
         titleTextStyle: const TextStyle(
           color: Colors.white,
+          fontFamily: 'Poppins',
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
@@ -41,7 +64,6 @@ class Payment extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Name Row
                       Row(
                         children: const [
                           Icon(Icons.person, size: 28, color: Colors.black87),
@@ -49,6 +71,7 @@ class Payment extends StatelessWidget {
                           Text(
                             'John Doe',
                             style: TextStyle(
+                              fontFamily: 'Poppins',
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
@@ -57,7 +80,6 @@ class Payment extends StatelessWidget {
                       ),
                       SizedBox(height: 12),
 
-                      // Phone Row
                       Row(
                         children: const [
                           Icon(Icons.phone, size: 18, color: Colors.black87),
@@ -67,7 +89,6 @@ class Payment extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
 
-                      // Plan Amount Row
                       Row(
                         children: const [
                           Icon(Icons.article, size: 18, color: Colors.black87),
@@ -77,7 +98,6 @@ class Payment extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
 
-                      // Status Row
                       Row(
                         children: const [
                           Icon(Icons.article, size: 18, color: Colors.black87),
@@ -93,21 +113,76 @@ class Payment extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: "Select month",
-                border: OutlineInputBorder(
+
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      title: const Text(
+                        "Select month",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      content: SizedBox(
+                        width: double.maxFinite,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: months.length,
+                          itemBuilder: (context, i) {
+                            final m = months[i];
+                            return ListTile(
+                              title: Text(
+                                m,
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                              onTap: () {
+                                Navigator.of(ctx).pop();
+                                setState(() {
+                                  selectedMonth = m;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade400, width: 1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      selectedMonth ?? "Select month",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: Colors.black54,
+                    ),
+                  ],
                 ),
               ),
-              items: const [
-                DropdownMenuItem(value: "Jan", child: Text("January")),
-                DropdownMenuItem(value: "Feb", child: Text("February")),
-                DropdownMenuItem(value: "Mar", child: Text("March")),
-              ],
-              onChanged: (value) {
-                print("Selected: $value");
-              },
             ),
 
             const SizedBox(height: 24),
@@ -124,12 +199,13 @@ class Payment extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                print("Submit Payment tapped!");
+                print("Payments Received tapped! Month: ${selectedMonth ?? 'None'}");
               },
               icon: const Icon(Icons.payments, color: Colors.white),
               label: const Text(
                 "Payments Received",
                 style: TextStyle(
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -150,14 +226,15 @@ class Payment extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                print("Submit Payment tapped!");
+                print("Print Receipt tapped!");
               },
               icon: const Icon(Icons.print, color: Colors.lightBlue),
               label: const Text(
                 "Print Receipt",
                 style: TextStyle(
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: Colors.black,
                 ),
               ),
             ),
