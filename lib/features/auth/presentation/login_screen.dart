@@ -31,7 +31,17 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("❌ Invalid credentials!")),
+        const SnackBar(
+            content: Text(
+                "❌ Invalid credentials!",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+              ),
+            ),
+          backgroundColor: Colors.white,
+        ),
       );
     }
   }
@@ -144,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
                     minimumSize: const Size(165, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -153,8 +163,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text(
                     "Login",
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
                         fontSize: 16,
                     ),
                   ),

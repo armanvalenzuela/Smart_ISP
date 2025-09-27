@@ -88,7 +88,10 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Assigned Town:  Manila, Philippines",
-                            style: TextStyle(fontSize: 15),
+                            style:
+                            TextStyle(
+                                fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
@@ -137,7 +140,7 @@ class _ProfileState extends State<Profile> {
                         Icon(Icons.people, color: Colors.black87, size: 22),
                         SizedBox(width: 12),
                         Text(
-                          "Clients Collected: on November 20, 2023",
+                          "Clients Collected: 09-27-25",
                           style: TextStyle(fontSize: 15),
                         ),
                       ],
