@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'signup_screen.dart';
 import 'package:smart_isp/features/collector/presentation/home_screen.dart';
-import 'forgot_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -60,13 +58,13 @@ class _LoginScreenState extends State<LoginScreen> {
           color: Colors.black.withOpacity(0),
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
               const Text(
                 "Welcome!",
                 style: TextStyle(
-                  fontSize: 35,
+                  fontSize: 45,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -80,19 +78,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Text(
                   "Login to Continue",
                   style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 21,
                       fontFamily: 'Poppins',
                       color: Colors.white70,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 70),
+              const SizedBox(height: 50),
 
               Center(
                 child: SizedBox(
                   height: 50,
-                  width: 300,
+                  width: 320,
                   child: TextField(
                     controller: _emailController,
                     style: const TextStyle(
@@ -105,19 +103,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 35),
 
               Center(
                 child: SizedBox(
                   height: 50,
-                  width: 300,
+                  width: 320,
                   child: TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -131,7 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    minimumSize: const Size(165, 50),
+                    minimumSize: const Size(235, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

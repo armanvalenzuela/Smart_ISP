@@ -54,34 +54,35 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
             decoration: const BoxDecoration(
               color: Colors.blue,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
+              //borderRadius: BorderRadius.only(
+               // bottomLeft: Radius.circular(20),
+                //bottomRight: Radius.circular(20),
+              //),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "Collector",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Poppins',
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
+                const SizedBox(height: 30),
                 Row(
                   children: [
                     Expanded(
                       flex: 2,
-                      child: SizedBox(
+                      child: Container(
                         height: 36,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              spreadRadius: 1,
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
                         child: TextField(
                           controller: _searchController,
-                          onChanged: (value){
+                          onChanged: (value) {
                             setState(() {
                               searchQuery = value;
                             });
@@ -106,7 +107,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                               horizontal: 12,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
                           ),
@@ -296,10 +297,6 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
 
           switch (index) {
             case 0:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapScreen()),
-              );
               break;
             case 1:
               Navigator.push(
@@ -308,7 +305,10 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
               );
               break;
             case 2:
-              //Placeholder ng print, so wala pang function yet
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapScreen()),
+              );
               break;
           }
         },
@@ -318,16 +318,16 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Map",
+            icon: Icon(Icons.dashboard_sharp),
+            label: "Subscriptions",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.print),
-            label: "Print",
+            icon: Icon(Icons.map),
+            label: "Map",
           ),
         ],
       ),
@@ -382,7 +382,15 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.grey.shade400, width: 1),
         ),
         child: Row(

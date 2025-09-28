@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:smart_isp/features/auth/presentation/login_screen.dart';
+import 'package:smart_isp/features/collector/map_screen.dart';
+import 'package:smart_isp/features/collector/presentation/home_screen.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
 
   const FeatureCard({Key? key, required this.icon, required this.title})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +34,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  int _currentIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Profile"),
         titleTextStyle: const TextStyle(
           fontSize: 22,
@@ -88,9 +93,8 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Assigned Town:  Manila, Philippines",
-                            style:
-                            TextStyle(
-                                fontSize: 14,
+                            style: TextStyle(
+                              fontSize: 14,
                             ),
                           ),
                         ],
@@ -100,9 +104,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ),
-
-            SizedBox(height: 12),
-
+            const SizedBox(height: 12),
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -149,16 +151,13 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ),
-
-            SizedBox(height: 12),
-
-            FeatureCard(icon: Icons.print, title: "Default Printer"),
-            SizedBox(height: 35),
-
+            const SizedBox(height: 12),
+            const FeatureCard(icon: Icons.print, title: "Default Printer"),
+            const SizedBox(height: 35),
             Center(
               child: ElevatedButton.icon(
                 onPressed: () => _showLogoutDialog(context),
-                icon: Icon(Icons.logout, color: Colors.white),
+                icon: const Icon(Icons.logout, color: Colors.white),
                 label: const Text(
                   "Log Out",
                   style: TextStyle(
@@ -170,7 +169,8 @@ class _ProfileState extends State<Profile> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -180,6 +180,48 @@ class _ProfileState extends State<Profile> {
             ),
           ],
         ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CollectorHomePage()),
+              );
+              break;
+            case 1:
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapScreen()),
+              );
+              break;
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.subscriptions),
+            label: "Subscription",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Map",
+          ),
+        ],
       ),
     );
   }
@@ -218,7 +260,7 @@ class _ProfileState extends State<Profile> {
               Navigator.of(ctx).pop();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (Route<dynamic> route) => false,
+                    (Route<dynamic> route) => false,
               );
             },
             child: const Text(
