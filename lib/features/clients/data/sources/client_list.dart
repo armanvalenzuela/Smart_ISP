@@ -1,0 +1,58 @@
+import 'package:smart_isp/features/clients/data//models/client_model.dart';
+
+List<ClientModel> dummyClients = [
+  ClientModel(
+    id: '1',
+    name: 'Juan Dela Cruz',
+    phone: '09153997741',
+    status: 'Active',
+    distance: 200,
+    plan: 'Fiber Plan 100Mbps',
+    remarks: 'On-time payer',
+  ),
+  ClientModel(
+    id: '2',
+    name: 'Maria Santos',
+    phone: '09181234567',
+    status: 'Inactive',
+    distance: 500,
+    plan: 'Fiber Plan 50Mbps',
+    remarks: 'Late payer',
+  ),
+  ClientModel(
+    id: '3',
+    name: 'Pedro Gomez',
+    phone: '09692136234',
+    status: 'Active',
+    distance: 1200,
+    plan: 'Fiber Plan 200Mbps',
+    remarks: 'Recently upgraded plan',
+  ),
+  ClientModel(
+    id: '4',
+    name: 'Andres Bonifacio',
+    phone: '09786543215',
+    status: 'Active',
+    distance: 1500,
+    plan: 'Fiber Plan 150Mbps',
+    remarks: 'On-time payer',
+  ),
+  ClientModel(
+    id: '5',
+    name: 'Emilio Jacinto',
+    phone: '09786543215',
+    status: 'Active',
+    distance: 3700,
+    plan: 'Fiber Plan 300Mbps',
+    remarks: 'On-time payer',
+  ),
+  ClientModel(
+    id: '6',
+    name: 'Diana Cortez',
+    phone: '09786543215',
+    status: 'Inactive',
+    distance: 1200,
+    plan: 'Fiber Plan 200Mbps',
+    remarks: 'Late payer',
+  ),
+];
