@@ -8,8 +8,12 @@ class FeatureCard extends StatelessWidget {
   final String title;
   final Color? color;
 
-  const FeatureCard({Key? key, required this.icon, required this.title, this.color})
-      : super(key: key);
+  const FeatureCard({
+    Key? key,
+    required this.icon,
+    required this.title,
+    this.color,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +84,7 @@ class _ProfileState extends State<Profile> {
                           Icon(Icons.person, color: Colors.black87, size: 22),
                           SizedBox(width: 12),
                           Text(
-                            "John Doe",
+                            "James Patrick Paloyo",
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.bold,
@@ -96,9 +100,7 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 12),
                           Text(
                             "Assigned Town:  Manila, Philippines",
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
+                            style: TextStyle(fontSize: 14),
                           ),
                         ],
                       ),
@@ -156,7 +158,11 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             const SizedBox(height: 12),
-            const FeatureCard(icon: Icons.print, title: "Default Printer", color: Colors.white),
+            const FeatureCard(
+              icon: Icons.print,
+              title: "Default Printer",
+              color: Colors.white,
+            ),
             const SizedBox(height: 35),
 
             Center(
@@ -174,8 +180,10 @@ class _ProfileState extends State<Profile> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 75, vertical: 18),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 75,
+                    vertical: 18,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -226,14 +234,8 @@ class _ProfileState extends State<Profile> {
             icon: Icon(Icons.dashboard_sharp),
             label: "Subscriptions",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Map",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
         ],
       ),
     );
@@ -244,9 +246,7 @@ class _ProfileState extends State<Profile> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: const Column(
           children: [
             Text(
@@ -264,7 +264,7 @@ class _ProfileState extends State<Profile> {
               thickness: 1,
               indent: 10,
               endIndent: 10,
-            )
+            ),
           ],
         ),
         content: const Text(
@@ -289,7 +289,7 @@ class _ProfileState extends State<Profile> {
               Navigator.of(ctx).pop();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
               );
             },
             child: const Text(
