@@ -46,7 +46,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
 
       body: Column(
         children: [
@@ -68,7 +68,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        height: 36,
+                        height: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
@@ -103,7 +103,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                             fillColor: Colors.white,
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(
-                              vertical: 0,
+                              vertical: 10,
                               horizontal: 12,
                             ),
                             border: OutlineInputBorder(
@@ -134,7 +134,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
 
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 0),
@@ -171,6 +171,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
 
           Expanded(
             child: RefreshIndicator(
+              color: Colors.blue,
               onRefresh: _refreshClients,
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -179,6 +180,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
                   final client = filteredClients[index];
                   return Card(
                     margin: const EdgeInsets.only(bottom: 10),
+                    color: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -301,13 +303,21 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
             case 1:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Profile()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const Profile(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
             case 2:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MapScreen()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const MapScreen(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
           }
@@ -346,30 +356,46 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
           context: context,
           builder: (ctx) {
             return AlertDialog(
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              title: Text(
-                hint,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
+              title: Center(
+                child: Text(
+                  hint,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
+                  ),
                 ),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: items.map((item) {
-                  return ListTile(
-                    title: Text(
-                      item,
-                      style: const TextStyle(fontFamily: 'Poppins'),
-                    ),
-                    onTap: () {
-                      Navigator.of(ctx).pop();
-                      setState(() {
-                        onSelected(item);
-                      });
-                    },
+                children: items.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  String item = entry.value;
+                  
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          item,
+                          style: const TextStyle(fontFamily: 'Poppins'),
+                        ),
+                        onTap: () {
+                          Navigator.of(ctx).pop();
+                          setState(() {
+                            onSelected(item);
+                          });
+                        },
+                      ),
+                      if (index < items.length - 1)
+                        const Divider(
+                          height: 1,
+                          thickness: 0.5,
+                          color: Colors.grey,
+                        ),
+                    ],
                   );
                 }).toList(),
               ),

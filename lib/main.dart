@@ -17,6 +17,11 @@ class SmartISP extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
         scaffoldBackgroundColor: Colors.white,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.blue,
+          selectionColor: Colors.blue.withOpacity(0.35),
+          selectionHandleColor: Colors.blue,
+        ),
       ),
       home: const SplashScreen(),
       routes: {

@@ -66,13 +66,21 @@ class _MapScreenState extends State<MapScreen> {
             case 0:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const CollectorHomePage()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const CollectorHomePage(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
             case 1:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Profile()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const Profile(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
             case 2:
@@ -85,7 +93,7 @@ class _MapScreenState extends State<MapScreen> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.subscriptions),
+            icon: Icon(Icons.dashboard_sharp),
             label: "Subscriptions",
           ),
           BottomNavigationBarItem(

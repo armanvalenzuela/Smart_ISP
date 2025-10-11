@@ -6,14 +6,16 @@ import 'package:smart_isp/features/collector/presentation/home_screen.dart';
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
+  final Color? color;
 
-  const FeatureCard({Key? key, required this.icon, required this.title})
+  const FeatureCard({Key? key, required this.icon, required this.title, this.color})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
+      color: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         leading: Icon(icon, color: Colors.blue, size: 32),
@@ -60,6 +62,7 @@ class _ProfileState extends State<Profile> {
             InkWell(
               borderRadius: BorderRadius.circular(10),
               child: Card(
+                color: Colors.white,
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -107,6 +110,7 @@ class _ProfileState extends State<Profile> {
             const SizedBox(height: 12),
             Card(
               elevation: 2,
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -152,8 +156,9 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             const SizedBox(height: 12),
-            const FeatureCard(icon: Icons.print, title: "Default Printer"),
+            const FeatureCard(icon: Icons.print, title: "Default Printer", color: Colors.white),
             const SizedBox(height: 35),
+
             Center(
               child: ElevatedButton.icon(
                 onPressed: () => _showLogoutDialog(context),
@@ -170,9 +175,9 @@ class _ProfileState extends State<Profile> {
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                  const EdgeInsets.symmetric(horizontal: 75, vertical: 18),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   elevation: 3,
                 ),
@@ -191,7 +196,11 @@ class _ProfileState extends State<Profile> {
             case 0:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const CollectorHomePage()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const CollectorHomePage(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
             case 1:
@@ -199,7 +208,11 @@ class _ProfileState extends State<Profile> {
             case 2:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MapScreen()),
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const MapScreen(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
               );
               break;
           }
@@ -210,8 +223,8 @@ class _ProfileState extends State<Profile> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.subscriptions),
-            label: "Subscription",
+            icon: Icon(Icons.dashboard_sharp),
+            label: "Subscriptions",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -230,14 +243,29 @@ class _ProfileState extends State<Profile> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text(
-          "Log Out?",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: const Column(
+          children: [
+            Text(
+              "Log Out?",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            SizedBox(height: 8),
+            Divider(
+              color: Colors.grey,
+              thickness: 1,
+              indent: 10,
+              endIndent: 10,
+            )
+          ],
         ),
         content: const Text(
           "Are you sure you want to logout?",
@@ -250,8 +278,9 @@ class _ProfileState extends State<Profile> {
               "Cancel",
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 14,
-                color: Colors.lightBlue,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
             ),
           ),
@@ -267,7 +296,7 @@ class _ProfileState extends State<Profile> {
               "Log Out",
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
               ),
