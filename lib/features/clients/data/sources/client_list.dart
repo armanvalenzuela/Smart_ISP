@@ -3,7 +3,7 @@ import 'package:smart_isp/features/clients/data//models/client_model.dart';
 List<ClientModel> dummyClients = [
   ClientModel(
     id: '1',
-    name: 'Juan Dela Cruz',
+    name: 'Tite',
     phone: '09153997741',
     status: 'Active',
     distance: 200,
