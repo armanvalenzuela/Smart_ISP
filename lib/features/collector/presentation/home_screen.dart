@@ -46,6 +46,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
     }).toList();
 
     return Scaffold(
+      
       backgroundColor: Colors.white,
 
       body: Column(
@@ -53,7 +54,7 @@ class _CollectorHomePageState extends State<CollectorHomePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
             decoration: const BoxDecoration(
-              color: Colors.blue,
+              color: Colors.lightBlue,
               //borderRadius: BorderRadius.only(
                // bottomLeft: Radius.circular(20),
                 //bottomRight: Radius.circular(20),

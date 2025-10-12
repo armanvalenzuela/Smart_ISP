@@ -30,7 +30,7 @@ class _MapScreenState extends State<MapScreen> {
           color: Colors.white,
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.lightBlue,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FlutterMap(
