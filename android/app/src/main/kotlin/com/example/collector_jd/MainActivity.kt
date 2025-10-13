@@ -1,4 +1,4 @@
-package com.example.smart_isp
+package com.example.collector_jd
 
 import io.flutter.embedding.android.FlutterActivity
 

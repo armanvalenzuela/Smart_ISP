@@ -1,11 +1,11 @@
 {
-    "name": "smart_isp",
-    "short_name": "smart_isp",
+    "name": "collector_jd",
+    "short_name": "collector_jd",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Smart ISP Project",
+    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
