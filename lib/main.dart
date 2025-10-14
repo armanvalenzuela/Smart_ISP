@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
@@ -108,21 +108,64 @@ class _MyAppState extends State<MyApp> {
 }
 
 // Splash Screen
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _controller.forward();
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {}
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-        child: Text(
-          'JD Collector',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/Splashscreen.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _animation,
+            child: Text(
+              'SMART ISP',
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.5,
+              ),
+            ),
           ),
         ),
       ),
@@ -148,9 +191,7 @@ final ThemeData _lightBlueTheme = ThemeData(
     ),
   ),
   textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(
-      foregroundColor: Colors.blue,
-    ),
+    style: TextButton.styleFrom(foregroundColor: Colors.blue),
   ),
   inputDecorationTheme: const InputDecorationTheme(
     border: OutlineInputBorder(),
