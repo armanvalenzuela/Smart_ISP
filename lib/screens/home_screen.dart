@@ -100,11 +100,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _unpaidCount = 0;
 
     _filteredClients = _clients.where((client) {
-      final matchesSearch = client.name.toLowerCase().contains(_searchTerm.toLowerCase()) ||
+      final matchesSearch =
+          client.name.toLowerCase().contains(_searchTerm.toLowerCase()) ||
           client.phone.contains(_searchTerm);
 
       final status = client.monthlyStatus[key]?.toString().toLowerCase() ?? '';
-      final matchesFilter = _statusFilter == 'All' ||
+      final matchesFilter =
+          _statusFilter == 'All' ||
           _statusFilter == 'Nearest' ||
           (_statusFilter == 'Paid' && status == 'paid') ||
           (_statusFilter == 'Unpaid' && status != 'paid');
@@ -122,11 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_statusFilter == 'Nearest') {
-      _filteredClients.sort((a, b) => _distanceValue(a).compareTo(_distanceValue(b)));
+      _filteredClients.sort(
+        (a, b) => _distanceValue(a).compareTo(_distanceValue(b)),
+      );
     } else {
       _filteredClients.sort((a, b) {
-        final aPaid = (a.monthlyStatus[key]?.toString().toLowerCase() ?? '') == 'paid';
-        final bPaid = (b.monthlyStatus[key]?.toString().toLowerCase() ?? '') == 'paid';
+        final aPaid =
+            (a.monthlyStatus[key]?.toString().toLowerCase() ?? '') == 'paid';
+        final bPaid =
+            (b.monthlyStatus[key]?.toString().toLowerCase() ?? '') == 'paid';
         if (aPaid != bPaid) return aPaid ? 1 : -1;
         return 0;
       });
@@ -140,28 +146,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<DropdownMenuItem<DateTime>> _buildMonthOptions() {
-  final Set<String> uniqueKeys = {};
+    final Set<String> uniqueKeys = {};
 
-  for (final client in _clients) {
-    uniqueKeys.addAll(client.monthlyStatus.keys.where((k) => k.startsWith('Status_')));
+    for (final client in _clients) {
+      uniqueKeys.addAll(
+        client.monthlyStatus.keys.where((k) => k.startsWith('Status_')),
+      );
+    }
+
+    final List<DateTime> dates = uniqueKeys.map((key) {
+      final parts = key.split('_');
+      final year = int.tryParse(parts[1]) ?? DateTime.now().year;
+      final month = int.tryParse(parts[2]) ?? DateTime.now().month;
+      return DateTime(year, month);
+    }).toList();
+
+    // Remove duplicates, sort descending
+    final uniqueDates = dates.toSet().toList()..sort((a, b) => b.compareTo(a));
+
+    return uniqueDates.map((date) {
+      final label = DateFormat('MMMM yyyy').format(date);
+      return DropdownMenuItem(value: date, child: Text(label));
+    }).toList();
   }
-
-  final List<DateTime> dates = uniqueKeys.map((key) {
-    final parts = key.split('_');
-    final year = int.tryParse(parts[1]) ?? DateTime.now().year;
-    final month = int.tryParse(parts[2]) ?? DateTime.now().month;
-    return DateTime(year, month);
-  }).toList();
-
-  // Remove duplicates, sort descending
-  final uniqueDates = dates.toSet().toList()
-    ..sort((a, b) => b.compareTo(a));
-
-  return uniqueDates.map((date) {
-    final label = DateFormat('MMMM yyyy').format(date);
-    return DropdownMenuItem(value: date, child: Text(label));
-  }).toList();
-}
 
   /*
   List<DropdownMenuItem<DateTime>> _buildMonthOptions() {
@@ -218,130 +225,216 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('Subscribers')),
-        actions: [IconButton(onPressed: _loadClients, icon: const Icon(Icons.refresh))],
+        title: const Text('Subscribers'),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF4093FF),
+        elevation: 0,
       ),
       body: RefreshIndicator(
         onRefresh: _loadClients,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Search by name or phone',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  _searchTerm = value;
-                  _applyFilters();
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: DropdownButtonFormField<DateTime>(
-                value: _buildMonthOptions().any((item) => item.value == _selectedMonth)
-                    ? _selectedMonth
-                    : (_buildMonthOptions().isNotEmpty ? _buildMonthOptions().first.value : null),
-                items: _buildMonthOptions(),
-                decoration: const InputDecoration(
-                  labelText: 'Filter by month',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedMonth = value;
-                      _applyFilters();
-                    });
-                  }
-                },
-              ),
+            // header section
+            Container(
+              width: double.infinity,
+              color: const Color(0xFF4093FF),
+              padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      // Search field
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            prefixIcon: const Icon(Icons.search),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 6,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            _searchTerm = value;
+                            _applyFilters();
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: DropdownButtonFormField<String>(
-                value: _statusFilter,
-                items: _statusOptions.map((option) {
-                  return DropdownMenuItem(value: option, child: Text(option));
-                }).toList(),
-                onChanged: (value) {
-                  _statusFilter = value!;
-                  _applyFilters();
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Filter by status or distance',
-                  border: OutlineInputBorder(),
-                ),
+                      // Status dropdown
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _statusFilter,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            onChanged: (value) {
+                              setState(() {
+                                _statusFilter = value!;
+                                _applyFilters();
+                              });
+                            },
+                            items: _statusOptions.map((option) {
+                              return DropdownMenuItem(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // 🔹 Filter by Month
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: DropdownButtonFormField<DateTime>(
+                      value:
+                          _buildMonthOptions().any(
+                            (item) => item.value == _selectedMonth,
+                          )
+                          ? _selectedMonth
+                          : (_buildMonthOptions().isNotEmpty
+                                ? _buildMonthOptions().first.value
+                                : null),
+                      items: _buildMonthOptions(),
+                      decoration: const InputDecoration(
+                        labelText: 'Filter by month',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedMonth = value;
+                            _applyFilters();
+                          });
+                        }
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Paid/Unpaid summary
+                  Center(
+                    child: Text(
+                      'Paid: $_paidCount     Unpaid: $_unpaidCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text('📦 Paid: $_paidCount    ❌ Unpaid: $_unpaidCount',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            ),
+
+            // 🔸 List section (white background)
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
                   : _filteredClients.isEmpty
-                      ? const Center(child: Text('No clients found.'))
-                      : ListView.builder(
-                          padding: const EdgeInsets.all(10),
-                          itemCount: _filteredClients.length,
-                          itemBuilder: (context, index) {
-                            final client = _filteredClients[index];
-                            final distance = _distanceValue(client) / 1000;
-                            final key = _getStatusKeyForMonth(_selectedMonth);
-                            final status = client.monthlyStatus[key]?.toString().toLowerCase() ?? '';
-                            return Card(
-                              elevation: 2,
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              child: ListTile(
-                                contentPadding:
-                                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                title: Text(client.name,
-                                    style: const TextStyle(
-                                        fontSize: 17, fontWeight: FontWeight.bold)),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('📱 ${client.phone}'),
-                                    Text(
-                                      '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
-                                      style: TextStyle(
-                                        color: status == 'paid' ? Colors.green : Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    if (_currentPosition != null)
-                                      Text('📍 ${distance.toStringAsFixed(2)} km away',
-                                          style: const TextStyle(fontSize: 13, color: Colors.blueGrey)),
-                                  ],
-                                ),
-                                trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ClientDetailScreen(
-                                        client: client,
-                                        collectorName: widget.collectorName,
-                                      ),
-                                    ),
-                                  );
-                                },
+                  ? const Center(child: Text('No clients found.'))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(10),
+                      itemCount: _filteredClients.length,
+                      itemBuilder: (context, index) {
+                        final client = _filteredClients[index];
+                        final distance = _distanceValue(client) / 1000;
+                        final key = _getStatusKeyForMonth(_selectedMonth);
+                        final status =
+                            client.monthlyStatus[key]
+                                ?.toString()
+                                .toLowerCase() ??
+                            '';
+                        return Card(
+                          elevation: 2,
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            title: Text(
+                              client.name,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('📱 ${client.phone}'),
+                                Text(
+                                  '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
+                                  style: TextStyle(
+                                    color: status == 'paid'
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (_currentPosition != null)
+                                  Text(
+                                    '📍 ${distance.toStringAsFixed(2)} km away',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ClientDetailScreen(
+                                    client: client,
+                                    collectorName: widget.collectorName,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
       ),
+
+      // Floating buttons (unchanged)
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -387,12 +480,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildMiniFab(IconData icon, String tooltip, VoidCallback onPressed) {
     return FloatingActionButton(
       mini: true,
-      heroTag: tooltip,
+      onPressed: onPressed,
       tooltip: tooltip,
-      onPressed: () {
-        onPressed();
-        setState(() => _fabExpanded = false);
-      },
       child: Icon(icon),
     );
   }

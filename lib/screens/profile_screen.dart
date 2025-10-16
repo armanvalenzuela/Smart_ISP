@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         count++;
       }
     }
-  
+
     setState(() {
       _collectedThisMonth = count;
       _isLoading = false; // ✅ finished loading
@@ -118,9 +118,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     final addr = prefs.getString('printerAddress');
     if (addr == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No printer selected.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No printer selected.')));
       return;
     }
 
@@ -163,14 +163,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('Profile'))),
+      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Card(
               elevation: 3,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -183,7 +185,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Expanded(
                           child: Text(
                             widget.collectorName,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -207,20 +212,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
             Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: const Icon(Icons.print),
-              title: const Text('Default Printer'),
-              subtitle: (_selectedPrinterName != null && _selectedPrinterAddress != null)
-                  ? Text('$_selectedPrinterName\n$_selectedPrinterAddress')
-                  : const Text('No printer selected'),
-              trailing: IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: _selectPrinter,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              isThreeLine: true,
+              child: ListTile(
+                leading: const Icon(Icons.print),
+                title: const Text('Default Printer'),
+                subtitle:
+                    (_selectedPrinterName != null &&
+                        _selectedPrinterAddress != null)
+                    ? Text('$_selectedPrinterName\n$_selectedPrinterAddress')
+                    : const Text('No printer selected'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: _selectPrinter,
+                ),
+                isThreeLine: true,
+              ),
             ),
-          ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
               onPressed: (_selectedPrinterAddress == null) ? null : _testPrint,
@@ -236,10 +245,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   )
                 : Card(
                     elevation: 2,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: ListTile(
-                      leading: const Icon(Icons.check_circle, color: Colors.green),
-                      title: Text('Clients Collected This Month: $_collectedThisMonth'),
+                      leading: const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      ),
+                      title: Text(
+                        'Clients Collected This Month: $_collectedThisMonth',
+                      ),
                       subtitle: const Text('Based on Paid status this month'),
                     ),
                   ),
@@ -249,17 +265,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               leading: const Icon(Icons.logout, color: Colors.redAccent),
               title: const Text(
                 'Logout',
-                style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               onTap: _logout,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              tileColor: isDark ? Colors.white10 : Colors.red[50],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              tileColor: isDark
+                  ? Colors.white10
+                  : const Color.fromARGB(255, 252, 207, 214),
             ),
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
             const Text(
-              'Collector App v1.0.0 by JPPdp',
+              'Collector App v1.0.0 by SMART Solutions',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 4),
