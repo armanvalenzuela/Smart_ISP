@@ -41,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _paidCount = 0;
   int _unpaidCount = 0;
 
-  bool _fabExpanded = false;
+  // Bottom navigation state
+  int _selectedBottomIndex = 0;
+  final ScrollController _listScrollController = ScrollController();
 
   @override
   void initState() {
@@ -230,230 +232,235 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color(0xFF4093FF),
         elevation: 0,
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadClients,
-        child: Column(
-          children: [
-            // header section
-            Container(
-              width: double.infinity,
-              color: const Color(0xFF4093FF),
-              padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      // Search field
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            prefixIcon: const Icon(Icons.search),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 6,
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _searchTerm = value;
-                            _applyFilters();
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-
-                      // Status dropdown
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _statusFilter,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            onChanged: (value) {
-                              setState(() {
-                                _statusFilter = value!;
-                                _applyFilters();
-                              });
-                            },
-                            items: _statusOptions.map((option) {
-                              return DropdownMenuItem(
-                                value: option,
-                                child: Text(option),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // 🔹 Filter by Month
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DropdownButtonFormField<DateTime>(
-                      value:
-                          _buildMonthOptions().any(
-                            (item) => item.value == _selectedMonth,
-                          )
-                          ? _selectedMonth
-                          : (_buildMonthOptions().isNotEmpty
-                                ? _buildMonthOptions().first.value
-                                : null),
-                      items: _buildMonthOptions(),
-                      decoration: const InputDecoration(
-                        labelText: 'Filter by month',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedMonth = value;
-                            _applyFilters();
-                          });
-                        }
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Paid/Unpaid summary
-                  Center(
-                    child: Text(
-                      'Paid: $_paidCount     Unpaid: $_unpaidCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 🔸 List section (white background)
-            Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _filteredClients.isEmpty
-                  ? const Center(child: Text('No clients found.'))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(10),
-                      itemCount: _filteredClients.length,
-                      itemBuilder: (context, index) {
-                        final client = _filteredClients[index];
-                        final distance = _distanceValue(client) / 1000;
-                        final key = _getStatusKeyForMonth(_selectedMonth);
-                        final status =
-                            client.monthlyStatus[key]
-                                ?.toString()
-                                .toLowerCase() ??
-                            '';
-                        return Card(
-                          elevation: 2,
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
-                            title: Text(
-                              client.name,
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('📱 ${client.phone}'),
-                                Text(
-                                  '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
-                                  style: TextStyle(
-                                    color: status == 'paid'
-                                        ? Colors.green
-                                        : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                if (_currentPosition != null)
-                                  Text(
-                                    '📍 ${distance.toStringAsFixed(2)} km away',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.blueGrey,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 18,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ClientDetailScreen(
-                                    client: client,
-                                    collectorName: widget.collectorName,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-
-      // Floating buttons (unchanged)
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
+      body: Column(
         children: [
-          if (_fabExpanded) ...[
-            _buildMiniFab(Icons.map, 'Map View', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AllClientsMapScreen(
-                    clients: _clients,
-                    collectorName: widget.collectorName,
+          // header section
+          Container(
+            width: double.infinity,
+            color: const Color(0xFF4093FF),
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    // Search field
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          _searchTerm = value;
+                          _applyFilters();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // Status dropdown
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _statusFilter,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          onChanged: (value) {
+                            setState(() {
+                              _statusFilter = value!;
+                              _applyFilters();
+                            });
+                          },
+                          items: _statusOptions.map((option) {
+                            return DropdownMenuItem(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // 🔹 Filter by Month
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: DropdownButtonFormField<DateTime>(
+                    value: _buildMonthOptions().any((item) => item.value == _selectedMonth)
+                        ? _selectedMonth
+                        : (_buildMonthOptions().isNotEmpty ? _buildMonthOptions().first.value : null),
+                    items: _buildMonthOptions(),
+                    decoration: const InputDecoration(
+                      labelText: 'Filter by month',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _selectedMonth = value;
+                          _applyFilters();
+                        });
+                      }
+                    },
                   ),
                 ),
-              );
-            }),
-            const SizedBox(height: 10),
-            _buildMiniFab(Icons.refresh, 'Refresh', _loadClients),
-            const SizedBox(height: 10),
-            _buildMiniFab(Icons.account_circle, 'Profile', () {
+
+                const SizedBox(height: 10),
+
+                // Paid/Unpaid summary
+                Center(
+                  child: Text(
+                    'Paid: $_paidCount     Unpaid: $_unpaidCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Center(
+                  child: Text(
+                    _selectedPrinter != null ? 'Printer: ${_selectedPrinter!.name ?? _selectedPrinter!.address}' : 'Printer: Not selected',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 🔸 List section (white background)
+          Expanded(
+            child: _loading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: _loadClients,
+                    child: _filteredClients.isEmpty
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: const [
+                              SizedBox(height: 100),
+                              Center(child: Text('No clients found.')),
+                            ],
+                          )
+                        : ListView.builder(
+                            controller: _listScrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(10),
+                            itemCount: _filteredClients.length,
+                            itemBuilder: (context, index) {
+                              final client = _filteredClients[index];
+                              final distance = _distanceValue(client) / 1000;
+                              final key = _getStatusKeyForMonth(_selectedMonth);
+                              final status = client.monthlyStatus[key]?.toString().toLowerCase() ?? '';
+                              return Card(
+                                elevation: 2,
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  title: Text(
+                                    client.name,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('📱 ${client.phone}'),
+                                      Text(
+                                        '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
+                                        style: TextStyle(
+                                          color: status == 'paid' ? Colors.green : Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if (_currentPosition != null)
+                                        Text(
+                                          '📍 ${distance.toStringAsFixed(2)} km away',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.blueGrey,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 18,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ClientDetailScreen(
+                                          client: client,
+                                          collectorName: widget.collectorName,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+          ),
+        ],
+      ),
+      // Bottom navigation bar (replaces FAB)
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedBottomIndex,
+        selectedItemColor: const Color(0xFF4093FF),
+        onTap: (index) async {
+          setState(() => _selectedBottomIndex = index);
+          switch (index) {
+            case 0: // Subscribers (scroll to top)
+              // If already selected, scroll to top; otherwise just set index
+              if (_selectedBottomIndex == 0) {
+                _listScrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+              break;
+            case 1: // Profile
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -463,26 +470,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               );
-            }),
-            const SizedBox(height: 10),
-            _buildMiniFab(Icons.print, 'Select Printer', _selectPrinter),
-            const SizedBox(height: 10),
-          ],
-          FloatingActionButton(
-            onPressed: () => setState(() => _fabExpanded = !_fabExpanded),
-            child: Icon(_fabExpanded ? Icons.close : Icons.menu),
-          ),
+              break;
+            case 2: // Map
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AllClientsMapScreen(
+                    clients: _clients,
+                    collectorName: widget.collectorName,
+                  ),
+                ),
+              );
+              break;
+            case 3: // Printer
+              await _selectPrinter();
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Subscribers'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.print), label: 'Printer'),
         ],
       ),
     );
   }
 
-  Widget _buildMiniFab(IconData icon, String tooltip, VoidCallback onPressed) {
-    return FloatingActionButton(
-      mini: true,
-      onPressed: onPressed,
-      tooltip: tooltip,
-      child: Icon(icon),
-    );
-  }
+  // NOTE: Floating mini-FABs were replaced by a BottomNavigationBar for
+  // improved usability. If you want to reintroduce mini FABs, re-add them here.
 }
