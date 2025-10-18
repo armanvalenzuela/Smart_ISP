@@ -56,7 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<bool?> _showFiltersDialog() async {
     String tempStatus = _statusFilter;
 
-    final dialogWidth = MediaQuery.of(context).size.width - 48; // align with header padding (12 left + 12 right + extra)
+    final dialogWidth =
+        MediaQuery.of(context).size.width -
+        48; // align with header padding (12 left + 12 right + extra)
 
     final result = await showDialog<bool>(
       context: context,
@@ -102,7 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                   Navigator.pop(context, true);
                 },
-                child: Text('Apply', style: GoogleFonts.poppins(color: Colors.white)),
+                child: Text(
+                  'Apply',
+                  style: GoogleFonts.poppins(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -275,7 +280,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Subscribers', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600)),
+        title: Text(
+          'Subscribers',
+          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
         elevation: 0,
@@ -311,11 +319,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fillColor: Colors.white,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.transparent),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.transparent),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12,
@@ -336,17 +348,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Filters button (opens dialog for Status + Month)
                     ElevatedButton.icon(
                       onPressed: _showFiltersDialog,
-                      icon: const Icon(Icons.filter_list, color: Colors.black87),
+                      icon: const Icon(
+                        Icons.filter_list,
+                        color: Colors.black87,
+                      ),
                       label: Text(
-                        _statusFilter == 'All' ? 'Filters' : 'Filters (${_statusFilter})',
-                        style: GoogleFonts.poppins(color: Colors.black87, fontSize: 13),
+                        _statusFilter == 'All'
+                            ? 'Filters'
+                            : 'Filters (${_statusFilter})',
+                        style: GoogleFonts.poppins(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         minimumSize: const Size(80, 36),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         elevation: 0,
                       ),
                     ),
@@ -356,36 +381,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 10),
 
                 // 🔹 Filter by Month (button opens dialog) — size matches search field
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    height: 36,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black87,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                      onPressed: () async {
-                        final ok = await _showMonthDialog();
-                        if (ok == true) {
-                          // month already applied inside dialog
-                        }
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            DateFormat('MMMM yyyy').format(_selectedMonth),
-                            style: GoogleFonts.poppins(color: Colors.black87, fontSize: 13),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_drop_down, color: Colors.black54),
-                        ],
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                        onPressed: () async {
+                          final ok = await _showMonthDialog();
+                          if (ok == true) {
+                            // month already applied inside dialog
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateFormat('MMMM yyyy').format(_selectedMonth),
+                              style: GoogleFonts.poppins(
+                                color: Colors.black87,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.black54,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
 
                 const SizedBox(height: 10),
@@ -404,11 +436,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 6),
                 Center(
                   child: Text(
-                    _selectedPrinter != null ? 'Printer: ${_selectedPrinter!.name ?? _selectedPrinter!.address}' : 'Printer: Not selected',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
+                    _selectedPrinter != null
+                        ? 'Printer: ${_selectedPrinter!.name ?? _selectedPrinter!.address}'
+                        : 'Printer: Not selected',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
               ],
@@ -438,7 +469,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               final client = _filteredClients[index];
                               final distance = _distanceValue(client) / 1000;
                               final key = _getStatusKeyForMonth(_selectedMonth);
-                              final status = client.monthlyStatus[key]?.toString().toLowerCase() ?? '';
+                              final status =
+                                  client.monthlyStatus[key]
+                                      ?.toString()
+                                      .toLowerCase() ??
+                                  '';
                               return Card(
                                 elevation: 2,
                                 margin: const EdgeInsets.symmetric(vertical: 5),
@@ -458,13 +493,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text('📱 ${client.phone}'),
                                       Text(
                                         '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
                                         style: TextStyle(
-                                          color: status == 'paid' ? Colors.green : Colors.red,
+                                          color: status == 'paid'
+                                              ? Colors.green
+                                              : Colors.red,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -547,7 +585,10 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Subscribers'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Subscribers',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
           BottomNavigationBarItem(icon: Icon(Icons.print), label: 'Printer'),

@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     return MaterialApp(
-      title: 'Collector App',
+      title: 'SMART ISP',
       debugShowCheckedModeBanner: false,
       theme: _isDarkMode ? _darkTheme : _lightBlueTheme,
       home: _isLoggedIn && _collectorName != null && _collectorTown != null
@@ -238,5 +238,7 @@ final ThemeData _darkTheme = ThemeData.dark().copyWith(
   ),
   // Apply Poppins font across the app for dark theme
   textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
-  primaryTextTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().primaryTextTheme),
+  primaryTextTheme: GoogleFonts.poppinsTextTheme(
+    ThemeData.dark().primaryTextTheme,
+  ),
 );
