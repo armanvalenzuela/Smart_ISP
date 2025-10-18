@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +51,92 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadClients();
     _loadDefaultPrinter();
+  }
+
+  Future<bool?> _showFiltersDialog() async {
+    String tempStatus = _statusFilter;
+
+    final dialogWidth = MediaQuery.of(context).size.width - 48; // align with header padding (12 left + 12 right + extra)
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => Center(
+        child: SizedBox(
+          width: dialogWidth,
+          child: AlertDialog(
+            title: Text('Filters', style: GoogleFonts.poppins()),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Status radio options (more compact)
+                Column(
+                  children: _statusOptions.map((s) {
+                    return RadioListTile<String>(
+                      dense: true,
+                      visualDensity: const VisualDensity(vertical: -2),
+                      title: Text(s, style: GoogleFonts.poppins(fontSize: 14)),
+                      value: s,
+                      groupValue: tempStatus,
+                      onChanged: (val) {
+                        if (val != null) {
+                          tempStatus = val;
+                          // force rebuild of dialog
+                          (context as Element).markNeedsBuild();
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel', style: GoogleFonts.poppins()),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _statusFilter = tempStatus;
+                    _applyFilters();
+                  });
+                  Navigator.pop(context, true);
+                },
+                child: Text('Apply', style: GoogleFonts.poppins(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return result == true;
+  }
+
+  Future<bool?> _showMonthDialog() async {
+    // Show a calendar-style date picker. We only care about month+year; when user
+    // picks a date we store the month from that date.
+    final firstDate = DateTime(2000);
+    final lastDate = DateTime.now().add(const Duration(days: 365 * 5));
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedMonth,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      helpText: 'Select month',
+      initialDatePickerMode: DatePickerMode.day,
+      // Cannot change the theme font of the native picker easily; keep Poppins where we control dialogs.
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedMonth = DateTime(picked.year, picked.month);
+        _applyFilters();
+      });
+      return true;
+    }
+    return false;
   }
 
   Future<void> _loadDefaultPrinter() async {
@@ -146,47 +233,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getStatusKeyForMonth(DateTime month) {
     return 'Status_${month.year}_${month.month.toString().padLeft(2, '0')}';
   }
-
-  List<DropdownMenuItem<DateTime>> _buildMonthOptions() {
-    final Set<String> uniqueKeys = {};
-
-    for (final client in _clients) {
-      uniqueKeys.addAll(
-        client.monthlyStatus.keys.where((k) => k.startsWith('Status_')),
-      );
-    }
-
-    final List<DateTime> dates = uniqueKeys.map((key) {
-      final parts = key.split('_');
-      final year = int.tryParse(parts[1]) ?? DateTime.now().year;
-      final month = int.tryParse(parts[2]) ?? DateTime.now().month;
-      return DateTime(year, month);
-    }).toList();
-
-    // Remove duplicates, sort descending
-    final uniqueDates = dates.toSet().toList()..sort((a, b) => b.compareTo(a));
-
-    return uniqueDates.map((date) {
-      final label = DateFormat('MMMM yyyy').format(date);
-      return DropdownMenuItem(value: date, child: Text(label));
-    }).toList();
-  }
-
-  /*
-  List<DropdownMenuItem<DateTime>> _buildMonthOptions() {
-    final now = DateTime.now();
-    final Set<DateTime> dates = {
-      ...List.generate(12, (i) => DateTime(now.year, now.month - i, 1)),
-      _selectedMonth,
-    };
-
-    final sortedDates = dates.toList()..sort((a, b) => b.compareTo(a));
-
-    return sortedDates.map((date) {
-      final label = DateFormat('MMMM yyyy').format(date);
-      return DropdownMenuItem(value: date, child: Text(label));
-    }).toList();
-  }*/
+  // Month options builder removed - month selection now uses a calendar-style
+  // date picker via showDatePicker and we store month/year from the picked date.
 
   Future<void> _selectPrinter() async {
     final printer = BlueThermalPrinter.instance;
@@ -227,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subscribers'),
+        title: Text('Subscribers', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600)),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
         elevation: 0,
@@ -238,60 +286,68 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: double.infinity,
             color: const Color(0xFF4093FF),
-            padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   children: [
-                    // Search field
+                    // Search field (reduced height, preserved rounded corners on focus)
                     Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 6,
+                      child: SizedBox(
+                        height: 36,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Material(
+                            color: Colors.white,
+                            child: TextField(
+                              style: GoogleFonts.poppins(fontSize: 13),
+                              decoration: InputDecoration(
+                                hintText: 'Search',
+                                hintStyle: GoogleFonts.poppins(fontSize: 13),
+                                prefixIcon: const Icon(Icons.search),
+                                isDense: true,
+                                filled: true,
+                                fillColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Colors.transparent),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Colors.transparent),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                _searchTerm = value;
+                                _applyFilters();
+                              },
+                            ),
                           ),
                         ),
-                        onChanged: (value) {
-                          _searchTerm = value;
-                          _applyFilters();
-                        },
                       ),
                     ),
                     const SizedBox(width: 10),
 
-                    // Status dropdown
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                    // Filters button (opens dialog for Status + Month)
+                    ElevatedButton.icon(
+                      onPressed: _showFiltersDialog,
+                      icon: const Icon(Icons.filter_list, color: Colors.black87),
+                      label: Text(
+                        _statusFilter == 'All' ? 'Filters' : 'Filters (${_statusFilter})',
+                        style: GoogleFonts.poppins(color: Colors.black87, fontSize: 13),
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _statusFilter,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          onChanged: (value) {
-                            setState(() {
-                              _statusFilter = value!;
-                              _applyFilters();
-                            });
-                          },
-                          items: _statusOptions.map((option) {
-                            return DropdownMenuItem(
-                              value: option,
-                              child: Text(option),
-                            );
-                          }).toList(),
-                        ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        minimumSize: const Size(80, 36),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
                       ),
                     ),
                   ],
@@ -299,33 +355,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 10),
 
-                // 🔹 Filter by Month
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButtonFormField<DateTime>(
-                    value: _buildMonthOptions().any((item) => item.value == _selectedMonth)
-                        ? _selectedMonth
-                        : (_buildMonthOptions().isNotEmpty ? _buildMonthOptions().first.value : null),
-                    items: _buildMonthOptions(),
-                    decoration: const InputDecoration(
-                      labelText: 'Filter by month',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                // 🔹 Filter by Month (button opens dialog) — size matches search field
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    height: 36,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                      ),
+                      onPressed: () async {
+                        final ok = await _showMonthDialog();
+                        if (ok == true) {
+                          // month already applied inside dialog
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            DateFormat('MMMM yyyy').format(_selectedMonth),
+                            style: GoogleFonts.poppins(color: Colors.black87, fontSize: 13),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_drop_down, color: Colors.black54),
+                        ],
                       ),
                     ),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          _selectedMonth = value;
-                          _applyFilters();
-                        });
-                      }
-                    },
                   ),
                 ),
 
