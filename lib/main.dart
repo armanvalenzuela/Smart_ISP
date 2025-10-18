@@ -204,6 +204,9 @@ final ThemeData _lightBlueTheme = ThemeData(
     iconColor: Colors.blue,
     textColor: Colors.black,
   ),
+  // Apply Poppins font across the app for light theme
+  textTheme: GoogleFonts.poppinsTextTheme(),
+  primaryTextTheme: GoogleFonts.poppinsTextTheme(),
 );
 
 // Dark Theme
@@ -233,4 +236,7 @@ final ThemeData _darkTheme = ThemeData.dark().copyWith(
     iconColor: Colors.lightBlueAccent,
     textColor: Colors.white,
   ),
+  // Apply Poppins font across the app for dark theme
+  textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+  primaryTextTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().primaryTextTheme),
 );

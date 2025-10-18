@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _loading = false;
   String _error = '';
+  bool _passwordVisible = false;
 
   Future<void> _handleLogin() async {
     setState(() {
@@ -77,83 +78,123 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'SMART ISP',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: GoogleFonts.poppins(
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
+                      letterSpacing: 1.5,
                     ),
                   ),
                   const SizedBox(height: 30),
 
-                  // 🔹 Username Field
-                  TextField(
-                    controller: _usernameController,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      labelStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  // Username Field (with shadowed white card)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _usernameController,
+                      textAlignVertical: TextAlignVertical.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.black,
                       ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      prefixIcon: const Icon(Icons.person, color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.blueAccent),
-                      ),
-
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.black),
+                      decoration: InputDecoration(
+                        hintText: 'Username',
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey),
+                        border: InputBorder.none,
+                        prefixIcon: const Icon(Icons.person, color: Colors.black54),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // 🔹 Password Field
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  // Password Field (with visibility toggle)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: !_passwordVisible,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.black,
                       ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white70),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey),
+                        border: InputBorder.none,
+                        prefixIcon: const Icon(Icons.lock, color: Colors.black54),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 35),
 
-                  // 🔹 Login Button
-                  _loading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: _handleLogin,
-                            icon: const Icon(Icons.login),
-                            label: const Text('Login'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
+                  // Login Button
+                    // 🔹 Login Button
+          _loading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Center(
+                            child: Container(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _handleLogin,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  minimumSize: const Size(320, 50),
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Login",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                    const SizedBox(height: 25),
 
                   // 🔹 Error Message
                   if (_error.isNotEmpty)
@@ -167,6 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                  const SizedBox(height: 25),
                 ],
               ),
             ),
