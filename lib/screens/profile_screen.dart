@@ -6,17 +6,20 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 
 import '../services/api_service.dart';
 import 'login_screen.dart';
-import 'home_screen.dart';
 import 'all_clients_map_screen.dart';
+import 'home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String collectorName;
   final String collectorTown;
+  final int initialIndex;
+
 
   const ProfileScreen({
     super.key,
     required this.collectorName,
     required this.collectorTown,
+    this.initialIndex = 1,
   });
 
   @override
@@ -28,10 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _selectedPrinterAddress;
   int _collectedThisMonth = 0;
   bool _isLoading = true; // ✅ added loading flag
+  int _selectedBottomIndex = 1;
+
 
   @override
   void initState() {
     super.initState();
+    _selectedBottomIndex = widget.initialIndex;
     _loadData();
   }
 
@@ -57,11 +63,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: GoogleFonts.poppins(color: const Color(0xFF4093FF), fontWeight: FontWeight.w600)),
+            child: Text('Cancel', style: GoogleFonts.poppins(color: const Color(0xFF4093FF), fontSize: 16 ,fontWeight: FontWeight.w600)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.redAccent, fontWeight: FontWeight.w600)),
+            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.redAccent, fontSize:  16, fontWeight: FontWeight.w600,)),
           ),
         ],
       ),
@@ -363,18 +369,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Bottom navigation bar so the Profile tab appears highlighted while on this screen
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: 1,
+        currentIndex: _selectedBottomIndex,
         selectedItemColor: const Color(0xFF4093FF),
         onTap: (index) async {
+          setState(() {
+            _selectedBottomIndex = index;
+          });
           switch (index) {
             case 0: // Subscribers
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => HomeScreen(
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => HomeScreen(
                     collectorName: widget.collectorName,
                     collectorTown: widget.collectorTown,
+                    initialIndex: 0,
                   ),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
                 ),
               );
               break;
@@ -383,13 +395,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               break;
             case 2: // Map
               final clients = await ApiService.getClientsByTown(widget.collectorTown);
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AllClientsMapScreen(
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => AllClientsMapScreen(
                     clients: clients,
                     collectorName: widget.collectorName,
                   ),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
                 ),
               );
               break;

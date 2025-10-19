@@ -15,11 +15,13 @@ import 'all_clients_map_screen.dart';
 class HomeScreen extends StatefulWidget {
   final String collectorName;
   final String collectorTown;
+  final int initialIndex;
 
   const HomeScreen({
     super.key,
     required this.collectorName,
     required this.collectorTown,
+    this.initialIndex = 0,
   });
 
   @override
@@ -49,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedBottomIndex = widget.initialIndex;
     _loadClients();
     _loadDefaultPrinter();
   }
@@ -550,23 +553,16 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) async {
           setState(() => _selectedBottomIndex = index);
           switch (index) {
-            case 0: // Subscribers (scroll to top)
-              // If already selected, scroll to top; otherwise just set index
-              if (_selectedBottomIndex == 0) {
-                _listScrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                );
-              }
+            case 0: // Subscribers
               break;
             case 1: // Profile
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => ProfileScreen(
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___,) => ProfileScreen(
                     collectorName: widget.collectorName,
                     collectorTown: widget.collectorTown,
+                    initialIndex: 1,
                   ),
                 ),
               );
@@ -574,8 +570,8 @@ class _HomeScreenState extends State<HomeScreen> {
             case 2: // Map
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AllClientsMapScreen(
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___,) => AllClientsMapScreen(
                     clients: _clients,
                     collectorName: widget.collectorName,
                   ),
