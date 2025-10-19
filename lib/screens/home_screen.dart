@@ -282,7 +282,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           'Subscribers',
-          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            ),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
@@ -312,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.poppins(fontSize: 13),
                               decoration: InputDecoration(
                                 hintText: 'Search',
-                                hintStyle: GoogleFonts.poppins(fontSize: 13),
+                                hintStyle: GoogleFonts.poppins(fontSize: 15),
                                 prefixIcon: const Icon(Icons.search),
                                 isDense: true,
                                 filled: true,
@@ -406,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               DateFormat('MMMM yyyy').format(_selectedMonth),
                               style: GoogleFonts.poppins(
                                 color: Colors.black87,
-                                fontSize: 18,
+                                fontSize: 15,
                               ),
                             ),
                             const Icon(

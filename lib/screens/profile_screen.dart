@@ -1,11 +1,13 @@
 // 📄 profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 
 import '../services/api_service.dart';
-import '../models/client_model.dart';
 import 'login_screen.dart';
+import 'home_screen.dart';
+import 'all_clients_map_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String collectorName;
@@ -31,6 +33,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  Future<void> _showLogoutDialog(BuildContext ctx) async {
+    final confirmed = await showDialog<bool>(
+      context: ctx,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Log Out?', style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 8),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+              indent: 10,
+              endIndent: 10,
+              ),
+          ],
+        ),
+        content: Text('Are you sure you want to logout?', style: GoogleFonts.poppins(fontSize: 16)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel', style: GoogleFonts.poppins(color: const Color(0xFF4093FF), fontWeight: FontWeight.w600)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.redAccent, fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) await _logout();
   }
 
   Future<void> _loadData() async {
@@ -63,7 +100,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showDialog(
         context: context,
         builder: (_) => const AlertDialog(
-          title: Text('No Printers'),
+                    title: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('No Printers'),
+                        const SizedBox(height: 8),
+                        const Divider(thickness: 1),
+                      ],
+                    ),
           content: Text('No paired Bluetooth printers found.'),
         ),
       );
@@ -158,12 +202,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  // theme brightness not required here after UI updates
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Profile',
+          style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w700),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF4093FF),
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -261,25 +316,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
             const Spacer(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.w600,
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () => _showLogoutDialog(context),
+                icon: const Icon(Icons.logout, color: Colors.white),
+                label: const Text(
+                  "Log Out",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 3,
                 ),
               ),
-              onTap: _logout,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              tileColor: isDark
-                  ? Colors.white10
-                  : const Color.fromARGB(255, 252, 207, 214),
             ),
             const SizedBox(height: 16),
-            const Divider(),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+              indent: 10,
+              endIndent: 10,
+            ),
             const SizedBox(height: 8),
             const Text(
               'Collector App v1.0.0 by SMART Solutions',
@@ -292,6 +359,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
+      ),
+      // Bottom navigation bar so the Profile tab appears highlighted while on this screen
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: 1,
+        selectedItemColor: const Color(0xFF4093FF),
+        onTap: (index) async {
+          switch (index) {
+            case 0: // Subscribers
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HomeScreen(
+                    collectorName: widget.collectorName,
+                    collectorTown: widget.collectorTown,
+                  ),
+                ),
+              );
+              break;
+            case 1: // Profile (current)
+              // nothing
+              break;
+            case 2: // Map
+              final clients = await ApiService.getClientsByTown(widget.collectorTown);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AllClientsMapScreen(
+                    clients: clients,
+                    collectorName: widget.collectorName,
+                  ),
+                ),
+              );
+              break;
+            case 3: // Printer
+              await _selectPrinter();
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Subscribers',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.print), label: 'Printer'),
+        ],
       ),
     );
   }
