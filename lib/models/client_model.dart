@@ -63,36 +63,42 @@ class ClientModel {
   }
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
+    // Normalize keys to lowercase for consistency
+    final lower = {
+      for (var entry in json.entries) entry.key.toLowerCase(): entry.value,
+    };
+
     final Map<String, String> status = {};
     final Map<String, String> collector = {};
     final Map<String, dynamic> payments = {};
 
-    json.forEach((key, value) {
-      if (key.startsWith("Status_")) status[key] = value ?? '';
-      if (key.startsWith("Collector_")) collector[key] = value ?? '';
-      if (key.startsWith("AmountPaid_")) payments[key] = value;
+    lower.forEach((key, value) {
+      if (key.startsWith("status_")) status[key] = value?.toString() ?? '';
+      if (key.startsWith("collector_"))
+        collector[key] = value?.toString() ?? '';
+      if (key.startsWith("amountpaid_")) payments[key] = value;
     });
 
     return ClientModel(
-      name: json["Name"],
-      phone: json["Phone"].toString(),
-      wifiId: json["WiFi_ID"],
-      town: json["Town"],
-      latitude: double.tryParse(json["Latitude"].toString()) ?? 0,
-      longitude: double.tryParse(json["Longitude"].toString()) ?? 0,
-      note: json["Note"],
-      planSpeed: json["Plan_Speed"],
-      planAmount: int.tryParse(json["Plan_Amount"].toString()) ?? 0,
-      promoDiscount: int.tryParse(json["Promo_Discount"].toString()) ?? 0,
-      promoRemarks: json["Promo_Remarks"],
-      startYear: int.tryParse(json["Start_Year"].toString()) ?? 0,
-      startMonth: int.tryParse(json["Start_Month"].toString()) ?? 0,
-      connectionStatus: json["Connection_Status"],
-      isActive: json["Active"] == "Yes",
+      name: lower["name"]?.toString() ?? '',
+      phone: lower["phone"]?.toString() ?? '',
+      wifiId: lower["wifi_id"]?.toString() ?? '',
+      town: lower["town"]?.toString() ?? '',
+      latitude: double.tryParse(lower["latitude"]?.toString() ?? '') ?? 0,
+      longitude: double.tryParse(lower["longitude"]?.toString() ?? '') ?? 0,
+      note: lower["note"]?.toString() ?? '',
+      planSpeed: lower["plan_speed"]?.toString() ?? '',
+      planAmount: int.tryParse(lower["plan_amount"]?.toString() ?? '') ?? 0,
+      promoDiscount:
+          int.tryParse(lower["promo_discount"]?.toString() ?? '') ?? 0,
+      promoRemarks: lower["promo_remarks"]?.toString() ?? '',
+      startYear: int.tryParse(lower["start_year"]?.toString() ?? '') ?? 0,
+      startMonth: int.tryParse(lower["start_month"]?.toString() ?? '') ?? 0,
+      connectionStatus: lower["connection_status"]?.toString() ?? '',
+      isActive: lower["active"]?.toString().toLowerCase() == 'yes',
       monthlyStatus: status,
       collectors: collector,
       payments: payments,
     );
   }
-  
 }
