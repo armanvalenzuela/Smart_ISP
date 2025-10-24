@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/client_model.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String _baseUrl = 'http://localhost:4000/api';
@@ -30,12 +28,7 @@ class ApiService {
     required String serial,
   }) async {
     final uri = Uri.parse('$_baseUrl/subscribers');
-    final body = {
-      'name': name,
-      'plan': plan,
-      'town': town,
-      'serial': serial,
-    };
+    final body = {'name': name, 'plan': plan, 'town': town, 'serial': serial};
 
     final res = await http.post(
       uri,
@@ -60,45 +53,59 @@ class ApiService {
   }
 
   static Future<bool> addPayment({
-  required String serial,
-  required int amount,
-  required String collector,
-}) async {
-  final uri = Uri.parse('$_baseUrl/payments');
-  final res = await http.post(
-    uri,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
-      'serial': serial,
-      'amount': amount,
-      'collector': collector,
-      'date': DateTime.now().toIso8601String(),
-    }),
-  );
+    required String serial,
+    required int amount,
+    required String collector,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/payments');
+    final res = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'serial': serial,
+        'amount': amount,
+        'collector': collector,
+        'date': DateTime.now().toIso8601String(),
+      }),
+    );
 
-  final data = json.decode(res.body);
-  return data['message'] == 'Payment recorded';
-}
+    final data = json.decode(res.body);
+    return data['message'] == 'Payment recorded';
+  }
 
-
-  // 🔐 Login
   static Future<Map<String, dynamic>?> login(
     String username,
     String password,
   ) async {
-    final uri = Uri.parse(
-      '$_baseUrl?action=login&username=$username&password=$password',
+    final uri = Uri.parse('$_baseUrl/login'); // <- matches /api/login
+    final res = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'username': username, 'password': password}),
     );
-    final res = await http.get(uri);
-    final data = json.decode(res.body);
-    return data['success'] ? data['data'] : null;
+
+    try {
+      final data = json.decode(res.body);
+      if (data['success'] == true) {
+        return data['data'];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('❌ JSON decode failed: $e');
+      print('Response was: ${res.body}');
+      return null;
+    }
   }
+
 
   // 📥 Get clients by town
   static Future<List<ClientModel>> getClientsByTown(String town) async {
     final uri = Uri.parse('$_baseUrl?action=getClients&town=$town');
     final res = await http.get(uri);
-    final data = json.decode(res.body);
+    if (res.body.isEmpty) return [];
+final data = json.decode(res.body);
+
 
     if (data['success'] == true) {
       List<ClientModel> clients = [];
