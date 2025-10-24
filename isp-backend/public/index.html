@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Smart ISP Control Panel</title>
+  <style>
+    body { font-family: Arial; margin: 0; background: #f5f7fb; }
+    header { background: #0078d7; color: white; padding: 12px 20px; font-size: 20px; }
+    main { padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #0078d7; color: white; }
+  </style>
+</head>
+<body>
+  <header>⚡ Smart ISP Dashboard</header>
+  <main>
+    <h2>Subscribers + Devices</h2>
+    <button onclick="loadMerged()">Refresh Data</button>
+    <table id="subs">
+      <thead><tr><th>Name</th><th>Serial</th><th>Plan</th><th>Town</th><th>Status</th><th>Model</th><th>Last Inform</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+<script>
+async function loadMerged() {
+  const res = await fetch("/api/merged");
+  const data = await res.json();
+  const tbody = document.querySelector("#subs tbody");
+  tbody.innerHTML = "";
+  data.forEach(s => {
+    const status = s.online ? "🟢 Online" : "⚪ Offline";
+    const last = s.lastInform ? new Date(s.lastInform).toLocaleString() : "—";
+    tbody.innerHTML += `
+      <tr>
+        <td>${s.name}</td>
+        <td>${s.serial}</td>
+        <td>${s.plan}</td>
+        <td>${s.town}</td>
+        <td>${status}</td>
+        <td>${s.model}</td>
+        <td>${last}</td>
+      </tr>`;
+  });
+}
+loadMerged();
+setInterval(loadMerged, 10000);
+</script>
+</body>
+</html>

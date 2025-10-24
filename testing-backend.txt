@@ -1,0 +1,2 @@
+command to add devices
+genieacs-sim --acs-url http://localhost:7547 --processes 3 --serial 104

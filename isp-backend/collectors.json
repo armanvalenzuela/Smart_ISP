@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1761323731125,
+    "name": "Arenas",
+    "password": "qwerty",
+    "town": "dagupan",
+    "activeClients": 5,
+    "lastCollectionDate": "2025-10-04",
+    "performanceScore": 31,
+    "coords": {
+      "lat": 12,
+      "lng": 12
+    }
+  }
+]
