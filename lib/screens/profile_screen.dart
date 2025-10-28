@@ -14,7 +14,6 @@ class ProfileScreen extends StatefulWidget {
   final String collectorTown;
   final int initialIndex;
 
-
   const ProfileScreen({
     super.key,
     required this.collectorName,
@@ -30,9 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _selectedPrinterName;
   String? _selectedPrinterAddress;
   int _collectedThisMonth = 0;
-  bool _isLoading = true; // ✅ added loading flag
+  bool _isLoading = true;
   int _selectedBottomIndex = 1;
-
 
   @override
   void initState() {
@@ -49,25 +47,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Log Out?', style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700)),
+            Text('Log Out?',
+                style: GoogleFonts.poppins(
+                    fontSize: 20, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             const Divider(
               color: Colors.grey,
               thickness: 1,
               indent: 10,
               endIndent: 10,
-              ),
+            ),
           ],
         ),
-        content: Text('Are you sure you want to logout?', style: GoogleFonts.poppins(fontSize: 16)),
+        content: Text('Are you sure you want to logout?',
+            style: GoogleFonts.poppins(fontSize: 16)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: GoogleFonts.poppins(color: const Color(0xFF4093FF), fontSize: 16 ,fontWeight: FontWeight.w600)),
+            child: Text('Cancel',
+                style: GoogleFonts.poppins(
+                    color: const Color(0xFF4093FF),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.redAccent, fontSize:  16, fontWeight: FontWeight.w600,)),
+            child: Text('Log Out',
+                style: GoogleFonts.poppins(
+                    color: Colors.redAccent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -94,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() {
       _collectedThisMonth = count;
-      _isLoading = false; // ✅ finished loading
+      _isLoading = false;
     });
   }
 
@@ -106,14 +115,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showDialog(
         context: context,
         builder: (_) => const AlertDialog(
-                    title: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('No Printers'),
-                        const SizedBox(height: 8),
-                        const Divider(thickness: 1),
-                      ],
-                    ),
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('No Printers'),
+              SizedBox(height: 8),
+              Divider(thickness: 1),
+            ],
+          ),
           content: Text('No paired Bluetooth printers found.'),
         ),
       );
@@ -208,18 +217,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-  // theme brightness not required here after UI updates
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
           'Profile',
-          style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w700),
+          style:
+              GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
@@ -279,8 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ListTile(
                 leading: const Icon(Icons.print),
                 title: const Text('Default Printer'),
-                subtitle:
-                    (_selectedPrinterName != null &&
+                subtitle: (_selectedPrinterName != null &&
                         _selectedPrinterAddress != null)
                     ? Text('$_selectedPrinterName\n$_selectedPrinterAddress')
                     : const Text('No printer selected'),
@@ -298,7 +303,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               label: const Text('Test Print'),
             ),
             const SizedBox(height: 20),
-            // ✅ Loading or show result
             _isLoading
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
@@ -320,7 +324,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       subtitle: const Text('Based on Paid status this month'),
                     ),
                   ),
-
             const Spacer(),
             Center(
               child: ElevatedButton.icon(
@@ -338,7 +341,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 18),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 100, vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -358,7 +362,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               'Collector App v1.0.0 by SMART Solutions',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
-            const SizedBox(height: 4),
             const Text(
               'Powered by Flutter & Google Sheets',
               style: TextStyle(fontSize: 14, color: Colors.grey),
@@ -366,18 +369,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-      // Bottom navigation bar so the Profile tab appears highlighted while on this screen
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedBottomIndex,
         selectedItemColor: const Color(0xFF4093FF),
         onTap: (index) async {
+          if (index == _selectedBottomIndex) return;
+
           setState(() {
             _selectedBottomIndex = index;
           });
+
           switch (index) {
-            case 0: // Subscribers
-              Navigator.push(
+            case 0:
+              Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (_, __, ___) => HomeScreen(
@@ -390,24 +395,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               );
               break;
-            case 1: // Profile (current)
-              // nothing
-              break;
-            case 2: // Map
-              final clients = await ApiService.getClientsByTown(widget.collectorTown);
+
+            case 1:
+              break; // current tab
+
+            case 2:
               Navigator.push(
                 context,
-                PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => AllClientsMapScreen(
-                    clients: clients,
+                MaterialPageRoute(
+                  builder: (_) => AllClientsMapScreen(
                     collectorName: widget.collectorName,
+                    collectorTown: widget.collectorTown, clients: [],
                   ),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
                 ),
               );
               break;
-            case 3: // Printer
+            case 3:
               await _selectPrinter();
               break;
           }

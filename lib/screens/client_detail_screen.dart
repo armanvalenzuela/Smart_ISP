@@ -1,6 +1,6 @@
 // 📄 client_detail_screen.dart
-import 'package:flutter/material.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,9 +67,9 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         latitude: client.latitude,
         longitude: client.longitude,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Remarks updated!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('✅ Remarks updated!')));
       await _refreshClient();
     } catch (e) {
       debugPrint('Save error: $e');
@@ -134,9 +134,12 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
       await printer.connect(selectedDevice!);
       await Future.delayed(const Duration(seconds: 2));
 
-      final status = client.monthlyStatus['Status_$currentMonthKey'] ?? 'Unpaid';
+      final status =
+          client.monthlyStatus['Status_$currentMonthKey'] ?? 'Unpaid';
       final isPaid = status.toLowerCase() == 'paid';
-      final amountPaid = isPaid ? client.payments['AmountPaid_$currentMonthKey'] ?? '-' : '-';
+      final amountPaid = isPaid
+          ? client.payments['AmountPaid_$currentMonthKey'] ?? '-'
+          : '-';
       final dateStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
       printer.printNewLine();
@@ -165,10 +168,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   void _showDialog(String title, String content) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-      ),
+      builder: (_) => AlertDialog(title: Text(title), content: Text(content)),
     );
   }
 
@@ -197,21 +197,61 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             if (_refreshing) const LinearProgressIndicator(),
             Card(
               elevation: 3,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               margin: const EdgeInsets.only(bottom: 16),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('📱 ${client.phone}', style: const TextStyle(fontSize: 16)),
-                    const SizedBox(height: 6),
-                    Text('🚀 Plan: ${client.planSpeed} – ₱${client.planAmount}',
-                        style: const TextStyle(fontSize: 16)),
-                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Text('💳 Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Icon(
+                          Icons.phone_android,
+                          size: 18,
+                          color: Colors.blueGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          client.phone,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.speed,
+                          size: 18,
+                          color: Colors.blueGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Plan: ${client.planSpeed} – ₱${client.planAmount}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.credit_card,
+                          size: 18,
+                          color: Colors.blueGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'Status: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Text(
                           status,
                           style: TextStyle(
@@ -221,8 +261,68 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         ),
                       ],
                     ),
-                    if (hasPaid && amountPaid != null) Text('💸 Paid: ₱$amountPaid'),
-                    /*const SizedBox(height: 10),
+
+                    if (hasPaid && amountPaid != null)
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.payments,
+                            size: 18,
+                            color: Colors.blueGrey,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Paid: ₱$amountPaid',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.map),
+              label: const Text('View on Map'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MapScreen(client: client)),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.payment),
+              label: const Text('Payment Processing'),
+              onPressed: hasPaid
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PaymentScreen(
+                            client: client,
+                            collectorName: widget.collectorName,
+                          ),
+                        ),
+                      );
+                    },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.print),
+              label: const Text('Print Receipt'),
+              onPressed: _printReceipt,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*const SizedBox(height: 10),
                     const Text('📝 Remarks:', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     TextField(
@@ -254,47 +354,3 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         ),
                       ),
                     ),*/
-                  ],
-                ),
-              ),
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.map),
-              label: const Text('View on Map'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => MapScreen(client: client)),
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.payment),
-              label: const Text('Pay Now'),
-              onPressed: hasPaid
-                  ? null
-                  : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PaymentScreen(
-                            client: client,
-                            collectorName: widget.collectorName,
-                          ),
-                        ),
-                      );
-                    },
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.print),
-              label: const Text('Print Receipt'),
-              onPressed: _printReceipt,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

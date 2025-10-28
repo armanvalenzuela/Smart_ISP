@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -104,7 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                   Navigator.pop(context, true);
                 },
-                child: Text('Apply', style: GoogleFonts.poppins(color: Colors.white)),
+                child: Text(
+                  'Apply',
+                  style: GoogleFonts.poppins(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -249,7 +252,8 @@ class _HomeScreenState extends State<HomeScreen> {
     int paid = 0, unpaid = 0;
     for (final c in filtered) {
       final s = c.monthlyStatus[key]?.toLowerCase() ?? '';
-      if (s == 'paid') paid++; else unpaid++;
+      if (s == 'paid') paid++;
+      else unpaid++;
     }
 
     setState(() {
@@ -277,19 +281,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getStatusKeyForMonth(DateTime m) =>
       'Status_${m.year}_${m.month.toString().padLeft(2, '0')}';
 
-  List<DropdownMenuItem<DateTime>> _buildMonthOptions() {
-    final keys = _clients.expand((c) => c.monthlyStatus.keys).where((k) => k.startsWith('Status_')).toSet();
-    final dates = keys.map((k) {
-      final p = k.split('_');
-      return DateTime(int.parse(p[1]), int.parse(p[2]));
-    }).toList()
-      ..sort((a, b) => b.compareTo(a));
-    return dates.map((d) => DropdownMenuItem(
-      value: d,
-      child: Text(DateFormat('MMMM yyyy').format(d)),
-    )).toList();
-  }
-
   Future<void> _selectPrinter() async {
     final printer = BlueThermalPrinter.instance;
     final devices = await printer.getBondedDevices();
@@ -302,11 +293,15 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.maxFinite,
           child: ListView(
             shrinkWrap: true,
-            children: devices.map((d) => ListTile(
-              title: Text(d.name ?? 'Unknown'),
-              subtitle: Text(d.address ?? ''),
-              onTap: () => Navigator.pop(context, d),
-            )).toList(),
+            children: devices
+                .map(
+                  (d) => ListTile(
+                    title: Text(d.name ?? 'Unknown'),
+                    subtitle: Text(d.address ?? ''),
+                    onTap: () => Navigator.pop(context, d),
+                  ),
+                )
+                .toList(),
           ),
         ),
       ),
@@ -323,7 +318,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Subscribers', style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w600)),
+        automaticallyImplyLeading: false, // ⛔ Removes back arrow
+        title: Text(
+          'Subscribers',
+          style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
         elevation: 0,
@@ -332,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: _initData,
         child: Column(
           children: [
-            // 🔹 HEADER
+            // Header and Filters UI
             Container(
               width: double.infinity,
               color: const Color(0xFF4093FF),
@@ -350,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(15),
                               borderSide: BorderSide.none,
                             ),
                           ),
@@ -365,14 +364,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: _showFiltersDialog,
                         icon: const Icon(Icons.filter_list, color: Colors.black87),
                         label: Text(
-                          _statusFilter == 'All' ? 'Filters' : 'Filters ($_statusFilter)',
-                          style: GoogleFonts.poppins(color: Colors.black87, fontSize: 13),
+                          _statusFilter == 'All'
+                              ? 'Filters'
+                              : 'Filters ($_statusFilter)',
+                          style: GoogleFonts.poppins(
+                            color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black87,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ],
@@ -383,13 +389,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(DateFormat('MMMM yyyy').format(_selectedMonth),
-                            style: GoogleFonts.poppins(fontSize: 15)),
+                        Text(
+                          DateFormat('MMMM yyyy').format(_selectedMonth),
+                          style: GoogleFonts.poppins(fontSize: 15),
+                        ),
                         const Icon(Icons.arrow_drop_down),
                       ],
                     ),
@@ -398,7 +408,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   Center(
                     child: Text(
                       'Paid: $_paidCount     Unpaid: $_unpaidCount',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   Center(
@@ -413,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // 🔹 CLIENT LIST
+            // Client List
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
@@ -431,26 +445,68 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Card(
                               elevation: 2,
                               margin: const EdgeInsets.symmetric(vertical: 5),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               child: ListTile(
-                                title: Text(client.name,
-                                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                title: Text(
+                                  client.name,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('📱 ${client.phone}'),
-                                    Text(
-                                      '💰 Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
-                                      style: TextStyle(
-                                          color: status == 'paid' ? Colors.green : Colors.red,
-                                          fontWeight: FontWeight.bold),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.phone_android,
+                                            size: 16, color: Colors.blueGrey),
+                                        const SizedBox(width: 4),
+                                        Text(client.phone),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.attach_money,
+                                          size: 16,
+                                          color: status == 'paid'
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Status: ${status == 'paid' ? 'Paid' : 'Unpaid'}',
+                                          style: TextStyle(
+                                            color: status == 'paid'
+                                                ? Colors.green
+                                                : Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     if (_currentPosition != null)
-                                      Text('📍 ${distance.toStringAsFixed(2)} km away',
-                                          style: const TextStyle(fontSize: 13, color: Colors.blueGrey)),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.location_on,
+                                              size: 16, color: Colors.blueGrey),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${distance.toStringAsFixed(2)} km away',
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.blueGrey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                   ],
                                 ),
-                                trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                                trailing:
+                                    const Icon(Icons.arrow_forward_ios, size: 18),
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -471,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // 🔹 BOTTOM NAVIGATION
+      // Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedBottomIndex,
@@ -482,14 +538,16 @@ class _HomeScreenState extends State<HomeScreen> {
             case 0:
               break;
             case 1:
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => ProfileScreen(
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => ProfileScreen(
                     collectorName: widget.collectorName,
                     collectorTown: widget.collectorTown,
                     initialIndex: 1,
                   ),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
                 ),
               );
               break;
@@ -500,6 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (_) => AllClientsMapScreen(
                     clients: _clients,
                     collectorName: widget.collectorName,
+                    collectorTown: widget.collectorTown,
                   ),
                 ),
               );

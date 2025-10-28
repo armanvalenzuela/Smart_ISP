@@ -7,15 +7,21 @@ import 'package:intl/intl.dart';
 
 import '../models/client_model.dart';
 import 'payment_screen.dart';
+import 'home_screen.dart';
+import 'profile_screen.dart';
 
 class AllClientsMapScreen extends StatefulWidget {
   final List<ClientModel> clients;
   final String collectorName;
+  final String collectorTown;
+  final int initialIndex;
 
   const AllClientsMapScreen({
     super.key,
     required this.clients,
     required this.collectorName,
+    required this.collectorTown,
+    this.initialIndex = 2, // default to Map tab
   });
 
   @override
@@ -26,12 +32,13 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
   String _statusFilter = 'All';
   DateTime? _selectedMonth;
   LatLng? _currentPosition;
-
+  int _selectedBottomIndex = 2; // Map tab by default
   final List<String> _statusOptions = ['All', 'Paid', 'Unpaid'];
 
   @override
   void initState() {
     super.initState();
+    _selectedBottomIndex = widget.initialIndex;
     _fetchLocation();
     _initMonth();
   }
@@ -64,9 +71,10 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
         .toSet();
 
     final parsedDates = keys.map((k) {
-      final parts = k.split('_');
+      final parts = k.split('_'); // ["Status", "2025", "9"]
       return DateTime(int.parse(parts[1]), int.parse(parts[2]));
-    }).toList()..sort((a, b) => b.compareTo(a));
+    }).toList()
+      ..sort((a, b) => b.compareTo(a));
 
     if (parsedDates.isNotEmpty) {
       _selectedMonth = parsedDates.first;
@@ -75,25 +83,20 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
 
   List<ClientModel> get filteredClients {
     if (_selectedMonth == null) return [];
-
-    final key =
-        'Status_${_selectedMonth!.year}_${_selectedMonth!.month.toString().padLeft(2, '0')}';
+    final key = 'Status_${_selectedMonth!.year}_${_selectedMonth!.month}'; // no padLeft
 
     return widget.clients.where((client) {
       if (client.latitude == 0 && client.longitude == 0) return false;
-
       final status = client.monthlyStatus[key]?.toString() ?? 'Unpaid';
-
       if (_statusFilter == 'All') return true;
       return status.toLowerCase() == _statusFilter.toLowerCase();
     }).toList();
   }
 
   int get paidCount => filteredClients.where((c) {
-    final key =
-        'Status_${_selectedMonth?.year}_${_selectedMonth?.month.toString().padLeft(2, '0')}';
-    return c.monthlyStatus[key]?.toString().toLowerCase() == 'paid';
-  }).length;
+        final key = 'Status_${_selectedMonth?.year}_${_selectedMonth?.month}';
+        return c.monthlyStatus[key]?.toString().toLowerCase() == 'paid';
+      }).length;
 
   int get unpaidCount => filteredClients.length - paidCount;
 
@@ -103,15 +106,11 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
         .where((k) => k.startsWith('Status_'))
         .toSet();
 
-    final dates =
-        keys
-            .map((k) {
-              final parts = k.split('_');
-              return DateTime(int.parse(parts[1]), int.parse(parts[2]));
-            })
-            .toSet()
-            .toList()
-          ..sort((a, b) => b.compareTo(a));
+    final dates = keys.map((k) {
+      final parts = k.split('_');
+      return DateTime(int.parse(parts[1]), int.parse(parts[2]));
+    }).toSet().toList()
+      ..sort((a, b) => b.compareTo(a));
 
     return dates.map((d) {
       final label = DateFormat('MMMM yyyy').format(d);
@@ -120,6 +119,9 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
   }
 
   void _showClientOptions(ClientModel client) {
+    final statusKey = 'Status_${_selectedMonth?.year}_${_selectedMonth?.month}';
+    final status = client.monthlyStatus[statusKey]?.toString() ?? 'Unpaid';
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -138,36 +140,28 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       client.name,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.phone,
-                          size: 18,
-                          color: Colors.black54,
-                        ),
+                        const Icon(Icons.phone, size: 18, color: Colors.black54),
                         const SizedBox(width: 6),
                         Text(client.phone),
                       ],
                     ),
                     Text(
-                      '💰 Status: ${client.monthlyStatus['Status_${_selectedMonth?.year}_${_selectedMonth?.month.toString().padLeft(2, '0')}'] ?? 'Unpaid'}',
+                      '💰 Status: $status',
                       style: TextStyle(
-                        color: client.statusThisMonth == 'Paid'
+                        color: status.toLowerCase() == 'paid'
                             ? Colors.green
                             : Colors.red,
                         fontWeight: FontWeight.bold,
@@ -216,11 +210,8 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Marker> clientMarkers = filteredClients.map((client) {
-      final key =
-          'Status_${_selectedMonth?.year}_${_selectedMonth?.month.toString().padLeft(2, '0')}';
-      final status =
-          client.monthlyStatus[key]?.toString().toLowerCase() ?? 'unpaid';
-
+      final key = 'Status_${_selectedMonth?.year}_${_selectedMonth?.month}';
+      final status = client.monthlyStatus[key]?.toString().toLowerCase() ?? 'unpaid';
       return Marker(
         width: 40,
         height: 40,
@@ -252,7 +243,12 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Client Map View')),
+      appBar: AppBar(
+        title: Text('Client Map View (${widget.collectorTown})'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        backgroundColor: const Color(0xFF4093FF),
+      ),
       body: Column(
         children: [
           Padding(
@@ -278,21 +274,18 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Text(
-              '📦 Paid: $paidCount    ❌ Unpaid: $unpaidCount',
+              '📦 Paid: $paidCount ❌ Unpaid: $unpaidCount',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                center:
-                    _currentPosition ??
+                center: _currentPosition ??
                     (widget.clients.isNotEmpty
-                        ? LatLng(
-                            widget.clients.first.latitude,
-                            widget.clients.first.longitude,
-                          )
-                        : const LatLng(15.0, 120.0)), // default fallback
+                        ? LatLng(widget.clients.first.latitude,
+                            widget.clients.first.longitude)
+                        : const LatLng(15.0, 120.0)),
                 zoom: 14,
               ),
               children: [
@@ -304,6 +297,54 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
               ],
             ),
           ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedBottomIndex,
+        selectedItemColor: const Color(0xFF4093FF),
+        onTap: (index) {
+          setState(() => _selectedBottomIndex = index);
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => HomeScreen(
+                    collectorName: widget.collectorName,
+                    collectorTown: widget.collectorTown,
+                    initialIndex: 0,
+                  ),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => ProfileScreen(
+                    collectorName: widget.collectorName,
+                    collectorTown: widget.collectorTown,
+                    initialIndex: 1,
+                  ),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+              break;
+            case 2:
+              break;
+            case 3:
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Subscribers'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.print), label: 'Printer'),
         ],
       ),
     );

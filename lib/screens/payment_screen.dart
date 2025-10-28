@@ -1,6 +1,6 @@
+import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/client_model.dart';
@@ -32,7 +32,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String _paymentType = 'Cash';
   bool _savingRemarks = false;
 
-  final TextEditingController _customRemarksController = TextEditingController();
+  final TextEditingController _customRemarksController =
+      TextEditingController();
   bool _showCustomInput = false;
 
   final BlueThermalPrinter _printer = BlueThermalPrinter.instance;
@@ -67,14 +68,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void _determineUnpaidMonths() {
-    final unpaid = client.monthlyStatus.entries
-        .where((entry) =>
-            entry.key.startsWith('Status_') &&
-            (entry.value == null ||
-                entry.value.toString().trim().toLowerCase() != 'paid'))
-        .map((entry) => entry.key)
-        .toList()
-      ..sort();
+    final unpaid =
+        client.monthlyStatus.entries
+            .where(
+              (entry) =>
+                  entry.key.startsWith('Status_') &&
+                  (entry.value == null ||
+                      entry.value.toString().trim().toLowerCase() != 'paid'),
+            )
+            .map((entry) => entry.key)
+            .toList()
+          ..sort();
 
     setState(() {
       _unpaidKeys = unpaid;
@@ -84,9 +88,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       _hasPaid = unpaid.isEmpty;
     });
   }
+
   Future<void> _updateRemarksOnly() async {
-    if (_paymentType == 'Custom' && _customRemarksController.text.trim().isEmpty) {
-      setState(() => _message = '⚠️ Please enter custom remarks.');
+    if (_paymentType == 'Custom' &&
+        _customRemarksController.text.trim().isEmpty) {
+      setState(() => _message = 'Please enter custom remarks.');
       return;
     }
 
@@ -105,10 +111,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         longitude: client.longitude,
       );
 
-      setState(() => _message = '✅ Remarks updated successfully!');
+      setState(() => _message = ' Remarks updated successfully!');
     } catch (e) {
       debugPrint('Failed to update remarks: $e');
-      setState(() => _message = '❌ Failed to update remarks.');
+      setState(() => _message = ' Failed to update remarks.');
     }
 
     setState(() => _processing = false);
@@ -116,12 +122,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _submitPayment() async {
     if (_unpaidKeys.length > 1 && _selectedMonthKey == null) {
-      setState(() => _message = '⚠️ Please select a month to pay.');
+      setState(() => _message = ' Please select a month to pay.');
       return;
     }
 
-    if (_paymentType == 'Custom' && _customRemarksController.text.trim().isEmpty) {
-      setState(() => _message = '⚠️ Please enter custom remarks.');
+    if (_paymentType == 'Custom' &&
+        _customRemarksController.text.trim().isEmpty) {
+      setState(() => _message = ' Please enter custom remarks.');
       return;
     }
 
@@ -165,7 +172,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         _hasPaid = true;
       });
     } else {
-      setState(() => _message = '❌ Payment failed.');
+      setState(() => _message = 'Payment failed!.');
     }
 
     setState(() => _processing = false);
@@ -219,7 +226,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           if (_selectedPrinter == null) return;
 
-          await prefs.setString('printerAddress', _selectedPrinter!.address ?? '');
+          await prefs.setString(
+            'printerAddress',
+            _selectedPrinter!.address ?? '',
+          );
           await prefs.setString('printerName', _selectedPrinter!.name ?? '');
         }
       }
@@ -299,18 +309,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final f = NumberFormat.currency(locale: 'en_PH', symbol: '₱');
     final plan = f.format(client.planAmount);
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('💰 Payment'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh Client',
-            onPressed: _refreshClient,
+    void _showGcashQRCode(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Gcash QR Code'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/gcash_qr.png', // Put your GCash QR here
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 10),
+              const Text('Scan this QR code to pay via Gcash'),
+            ],
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(centerTitle: true, title: const Text('Payment')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -319,22 +347,61 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   Card(
                     elevation: 3,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('👤 ${client.name}',
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.person,
+                                size: 20,
+                                color: Colors.blueGrey,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                client.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 8),
-                          Text('📱 Phone: ${client.phone}'),
-                          Text('📦 Plan Amount: $plan'),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.phone_android,
+                                size: 18,
+                                color: Colors.blueGrey,
+                              ),
+                              const SizedBox(width: 6),
+                              Text('Phone: ${client.phone}'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.inventory_2,
+                                size: 18,
+                                color: Colors.blueGrey,
+                              ),
+                              const SizedBox(width: 6),
+                              Text('Plan Amount: $plan'),
+                            ],
+                          ),
                           const SizedBox(height: 12),
                         ],
                       ),
                     ),
                   ),
+
+                  // Month dropdown (if multiple unpaid months)
                   if (_unpaidKeys.length > 1) ...[
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
@@ -351,10 +418,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             '${DateFormat.MMMM().format(DateTime(int.parse(year), int.parse(month)))} $year';
                         return DropdownMenuItem(value: key, child: Text(label));
                       }).toList(),
-                      onChanged: (value) => setState(() => _selectedMonthKey = value),
+                      onChanged: (value) =>
+                          setState(() => _selectedMonthKey = value),
                     ),
                   ],
+
                   const SizedBox(height: 16),
+
+                  // Payment type dropdown
                   DropdownButtonFormField<String>(
                     value: _paymentType,
                     decoration: const InputDecoration(
@@ -375,6 +446,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       }
                     },
                   ),
+
+                  // Custom remarks input
                   if (_showCustomInput) ...[
                     const SizedBox(height: 10),
                     TextField(
@@ -385,12 +458,34 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                     ),
                   ],
+
+                  // ✅ Gcash QR Code Button
+                  if (_paymentType == "Gcash") ...[
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.qr_code),
+                      label: const Text('QR Code'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      onPressed: () => _showGcashQRCode(context),
+                    ),
+                  ],
+
                   const SizedBox(height: 20),
+
+                  // Submit payment button
                   ElevatedButton.icon(
                     icon: const Icon(Icons.payment),
-                    label: _processing ? const Text('Processing...') : const Text('Submit Payment'),
-                    onPressed: _processing || _savingRemarks ? null : _submitPayment,
+                    label: _processing
+                        ? const Text('Processing...')
+                        : const Text('Submit Payment'),
+                    onPressed: _processing || _savingRemarks
+                        ? null
+                        : _submitPayment,
                   ),
+
+                  // Message display
                   if (_message.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     Center(
@@ -398,20 +493,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         _message,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: _message.contains('success') ? Colors.green : Colors.red,
+                          color: _message.contains('success')
+                              ? Colors.green
+                              : Colors.red,
                         ),
                       ),
                     ),
                   ],
-                  if(_paymentType == "Custom")...[
-                  const SizedBox(height: 10),
+
+                  // Update Remarks button
+                  if (_paymentType == "Custom") ...[
+                    const SizedBox(height: 10),
                     ElevatedButton.icon(
-                    icon: const Icon(Icons.edit_note),
-                    label: const Text('Update Remarks Only'),
-                    onPressed: _processing || _savingRemarks ? null : _updateRemarksOnly,
-                  ),
+                      icon: const Icon(Icons.edit_note),
+                      label: const Text('Update Remarks Only'),
+                      onPressed: _processing || _savingRemarks
+                          ? null
+                          : _updateRemarksOnly,
+                    ),
                   ],
+
                   const SizedBox(height: 10),
+
+                  // Print receipt
                   ElevatedButton.icon(
                     icon: const Icon(Icons.print),
                     label: const Text('Print Receipt'),

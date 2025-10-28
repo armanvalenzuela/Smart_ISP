@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,18 +8,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
-import 'package:window_size/window_size.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
 
-  // fix Ur phone size
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowTitle('SMART ISP');
-    setWindowMinSize(const Size(390, 844)); // typical phone size
-    setWindowMaxSize(const Size(390, 844));
-    setWindowFrame(const Rect.fromLTWH(100, 100, 390, 844));
-  }
+void main() {
   runApp(const MyApp());
 }
 
