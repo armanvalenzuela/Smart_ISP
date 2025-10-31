@@ -18,7 +18,18 @@
     <h2>Subscribers + Devices</h2>
     <button onclick="loadMerged()">Refresh Data</button>
     <table id="subs">
-      <thead><tr><th>Name</th><th>Serial</th><th>Plan</th><th>Town</th><th>Status</th><th>Model</th><th>Last Inform</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Serial</th>
+          <th>Plan</th>
+          <th>Town</th>
+          <th>Status</th>
+          <th>Model</th>
+          <th>Last Inform</th>
+        </tr>
+      </thead>
       <tbody></tbody>
     </table>
   </main>
@@ -35,6 +46,7 @@ async function loadMerged() {
     tbody.innerHTML += `
       <tr>
         <td>${s.name}</td>
+        <td>${s.phone || '—'}</td>
         <td>${s.serial}</td>
         <td>${s.plan}</td>
         <td>${s.town}</td>

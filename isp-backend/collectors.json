@@ -11,5 +11,31 @@
       "lat": 12,
       "lng": 12
     }
+  },
+  {
+    "id": 1761325396857,
+    "name": "Sebastian",
+    "password": "qwerty",
+    "town": "San Fabian",
+    "activeClients": 3,
+    "lastCollectionDate": "2025-10-04",
+    "performanceScore": 12,
+    "coords": {
+      "lat": 32,
+      "lng": 31
+    }
+  },
+  {
+    "id": 1761366019915,
+    "name": "Michael",
+    "password": "12345678",
+    "town": "Damortis",
+    "activeClients": 5500000,
+    "lastCollectionDate": "2025-08-02",
+    "performanceScore": 1,
+    "coords": {
+      "lat": 11,
+      "lng": 11
+    }
   }
 ]

@@ -1,3 +1,4 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
@@ -10,17 +11,25 @@ app.use(express.json());
 app.use(express.static("public")); // serve your web GUI
 
 const COLLECTORS_FILE = "./collectors.json";
+const ADMINS_FILE = "./admins.json";
 const DATA_FILE = "./subscribers.json";
 const GENIEACS_API = process.env.GENIEACS_API || "http://localhost:7557";
 const PORT = process.env.PORT || 4000;
 
 // --- Helper functions ---
-const loadSubs = () =>
-  fs.existsSync(DATA_FILE) ? JSON.parse(fs.readFileSync(DATA_FILE)) : [];
-const saveSubs = (subs) =>
-  fs.writeFileSync(DATA_FILE, JSON.stringify(subs, null, 2));
+const loadFile = (file) =>
+  fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : [];
+const saveFile = (file, data) =>
+  fs.writeFileSync(file, JSON.stringify(data, null, 2));
 
-// --- ROUTES ---
+const loadSubs = () => loadFile(DATA_FILE);
+const saveSubs = (subs) => saveFile(DATA_FILE, subs);
+const loadCollectors = () => loadFile(COLLECTORS_FILE);
+const saveCollectors = (collectors) => saveFile(COLLECTORS_FILE, collectors);
+const loadAdmins = () => loadFile(ADMINS_FILE);
+const saveAdmins = (admins) => saveFile(ADMINS_FILE, admins);
+
+// ---------------- ROUTES ----------------
 
 // 🧩 Add or update subscriber
 app.post("/api/subscribers", (req, res) => {
@@ -32,7 +41,7 @@ app.post("/api/subscribers", (req, res) => {
     paymentStatus,
     routerStatus,
     lastPaymentDate,
-    phone,  // <-- added
+    phone,
   } = req.body;
 
   if (!name || !serial) {
@@ -43,7 +52,6 @@ app.post("/api/subscribers", (req, res) => {
   let sub = subs.find((s) => s.serial === serial);
 
   if (sub) {
-    // Update existing
     Object.assign(sub, {
       name,
       plan,
@@ -51,10 +59,9 @@ app.post("/api/subscribers", (req, res) => {
       paymentStatus,
       routerStatus,
       lastPaymentDate,
-      phone,  // <-- save phone
+      phone,
     });
   } else {
-    // Add new
     subs.push({
       id: Date.now(),
       name,
@@ -64,7 +71,7 @@ app.post("/api/subscribers", (req, res) => {
       paymentStatus: paymentStatus || "Pending",
       routerStatus: routerStatus || "Offline",
       lastPaymentDate: lastPaymentDate || "",
-      phone,  // <-- save phone
+      phone,
       active: true,
     });
   }
@@ -73,48 +80,19 @@ app.post("/api/subscribers", (req, res) => {
   res.json({ message: "Subscriber saved", subscribers: subs });
 });
 
-
-const loadCollectors = () =>
-  fs.existsSync(COLLECTORS_FILE) ? JSON.parse(fs.readFileSync(COLLECTORS_FILE)) : [];
-const saveCollectors = (collectors) =>
-  fs.writeFileSync(COLLECTORS_FILE, JSON.stringify(collectors, null, 2));
+// 🧩 Get all subscribers
+app.get("/api/subscribers", (req, res) => {
+  res.json(loadSubs());
+});
 
 // 🧩 Get all collectors
 app.get("/api/collectors", (req, res) => {
   res.json(loadCollectors());
 });
 
-// 🧩 Collector login
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: "Username & password required" });
-  }
-
-  const collectors = loadCollectors();
-  const collector = collectors.find(
-    (c) => c.name === username && c.password === password
-  );
-
-  if (collector) {
-    res.json({
-      success: true,
-      data: {
-        name: collector.name,
-        town: collector.town,
-        activeClients: collector.activeClients,
-      },
-    });
-  } else {
-    res.status(401).json({ success: false, message: "Invalid username or password" });
-  }
-});
-
-
 // 🧩 Add or update collector
 app.post("/api/collectors", (req, res) => {
-  const { name, town, activeClients, lastCollectionDate, performanceScore, coords, password } = req.body;
+  const { name, town, activeClients, lastCollectionDate, performanceScore, coords, password, phone } = req.body;
   
   if (!name || !coords || !password) {
     return res.status(400).json({ error: "Name, coordinates and password are required" });
@@ -124,15 +102,14 @@ app.post("/api/collectors", (req, res) => {
   let collector = collectors.find((c) => c.name === name);
   
   if (collector) {
-    // Update existing collector
-    Object.assign(collector, { town, activeClients, lastCollectionDate, performanceScore, coords, password });
+    Object.assign(collector, { town, activeClients, lastCollectionDate, performanceScore, coords, password, phone });
   } else {
-    // Add new collector
     collectors.push({
       id: Date.now(),
       name,
       password,
       town,
+      phone,
       activeClients: activeClients || 0,
       lastCollectionDate: lastCollectionDate || new Date().toISOString().split('T')[0],
       performanceScore: performanceScore || 0,
@@ -144,13 +121,65 @@ app.post("/api/collectors", (req, res) => {
   res.json({ message: "Collector saved", collectors });
 });
 
+// 🧩 Admin registration
+app.post("/api/admins", (req, res) => {
+  const { username, email, password } = req.body;
 
-// 🧩 Get all subscribers
-app.get("/api/subscribers", (req, res) => {
-  res.json(loadSubs());
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: "Username, email and password required" });
+  }
+
+  let admins = loadAdmins();
+  if (admins.find((a) => a.username === username)) {
+    return res.status(400).json({ error: "Admin already exists" });
+  }
+
+  admins.push({
+    id: Date.now(),
+    username,
+    email,
+    password,
+    createdAt: new Date().toISOString(),
+  });
+
+  saveAdmins(admins);
+  res.json({ message: "Admin registered successfully", admins });
 });
 
-// 🧩 Fetch live devices from GenieACS
+// 🧩 Unified login for both Admin & Collector
+app.post("/api/login", (req, res) => {
+  const { username, password, role } = req.body;
+
+  if (!username || !password) {
+  return res.status(400).json({ success: false, message: "Missing credentials" });
+}
+
+// Check admin first
+const admins = loadAdmins();
+const admin = admins.find((a) => a.username === username && a.password === password);
+if (admin)
+  return res.json({
+    success: true,
+    role: "admin",
+    data: { username: admin.username, email: admin.email },
+  });
+
+// Then check collector
+const collectors = loadCollectors();
+const collector = collectors.find(
+  (c) => c.name === username && c.password === password
+);
+if (collector)
+  return res.json({
+    success: true,
+    role: "collector",
+    data: { name: collector.name, town: collector.town },
+  });
+
+res.status(401).json({ success: false, message: "Invalid credentials" });
+});
+
+// 🧩 Fetch live devices
 app.get("/api/devices", async (req, res) => {
   try {
     const { data } = await axios.get(`${GENIEACS_API}/devices`);
@@ -175,8 +204,7 @@ app.get("/api/merged", async (req, res) => {
       return {
         ...sub,
         lastInform: dev?.lastInform || null,
-        model:
-          dev?.summary?.match(/ModelName\s=\s([^\s]+)/)?.[1] || "Unknown",
+        model: dev?.summary?.match(/ModelName\s=\s([^\s]+)/)?.[1] || "Unknown",
         online: !!dev,
       };
     });
@@ -188,11 +216,11 @@ app.get("/api/merged", async (req, res) => {
   }
 });
 
-// Serve index.html for root path
+// 🧩 Serve index.html
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 ISP backend + GUI running at http://localhost:${PORT}`);
+  console.log(`🚀 ISP backend running at http://localhost:${PORT}`);
 });
