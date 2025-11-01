@@ -91,8 +91,7 @@ class ApiService {
       } else {
         return null;
       }
-    } catch (e) {
-      print('❌ JSON decode failed: $e');
+    } catch (e) { 
       print('Response was: ${res.body}');
       return null;
     }

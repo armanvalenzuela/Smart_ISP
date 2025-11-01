@@ -45,11 +45,12 @@ dependencies:
   qr_flutter: ^4.1.0
   geolocator: ^11.0.0
   connectivity_plus: ^5.0.2
-  geocoding: ^4.0.0
+  geocode: ^1.0.3
   permission_handler: ^12.0.0+1
   flutter_map_tile_caching: 9.0.1
   blue_thermal_printer: ^1.2.3
   window_size: ^0.1.0
+  webview_flutter: ^4.7.0
 
 dev_dependencies:
   flutter_test:

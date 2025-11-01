@@ -21,7 +21,7 @@ class AllClientsMapScreen extends StatefulWidget {
     required this.clients,
     required this.collectorName,
     required this.collectorTown,
-    this.initialIndex = 2, // default to Map tab
+    this.initialIndex = 2,
   });
 
   @override
@@ -32,7 +32,7 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
   String _statusFilter = 'All';
   DateTime? _selectedMonth;
   LatLng? _currentPosition;
-  int _selectedBottomIndex = 2; // Map tab by default
+  int _selectedBottomIndex = 2;
   final List<String> _statusOptions = ['All', 'Paid', 'Unpaid'];
 
   @override
@@ -71,7 +71,7 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
         .toSet();
 
     final parsedDates = keys.map((k) {
-      final parts = k.split('_'); // ["Status", "2025", "9"]
+      final parts = k.split('_');
       return DateTime(int.parse(parts[1]), int.parse(parts[2]));
     }).toList()
       ..sort((a, b) => b.compareTo(a));
@@ -83,7 +83,7 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
 
   List<ClientModel> get filteredClients {
     if (_selectedMonth == null) return [];
-    final key = 'Status_${_selectedMonth!.year}_${_selectedMonth!.month}'; // no padLeft
+    final key = 'Status_${_selectedMonth!.year}_${_selectedMonth!.month}';
 
     return widget.clients.where((client) {
       if (client.latitude == 0 && client.longitude == 0) return false;
@@ -133,7 +133,7 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
       builder: (_) => SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withOpacity(0.9),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Column(
@@ -194,10 +194,8 @@ class _AllClientsMapScreenState extends State<AllClientsMapScreen> {
                   Navigator.pop(context);
                   final url =
                       'https://www.google.com/maps/dir/?api=1&destination=${client.latitude},${client.longitude}';
-                  launchUrl(
-                    Uri.parse(url),
-                    mode: LaunchMode.externalApplication,
-                  );
+                  launchUrl(Uri.parse(url),
+                      mode: LaunchMode.externalApplication);
                 },
               ),
             ],

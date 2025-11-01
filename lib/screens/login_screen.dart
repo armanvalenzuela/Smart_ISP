@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
-      setState(() => _error = 'Invalid credentials.');
+      setState(() => _error = 'Account not Found');
     }
 
     setState(() => _loading = false);

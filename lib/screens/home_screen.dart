@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:geocode/geocode.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -162,36 +162,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<double> _getDistanceFromTown(String town) async {
-    try {
-      if (_currentPosition == null) {
-        print('⚠️ Skipping distance calc for $town — current location not available.');
-        return 0;
-      }
+  final geo = GeoCode();
+  try {
+    final location = await geo.forwardGeocoding(
+      address: '$town, Philippines',
+    );
 
-      List<Location> locations = [];
-      try {
-        locations = await locationFromAddress('$town, Philippines');
-      } catch (geoError) {
-        print('⚠️ Geocoding failed for $town: $geoError');
-        return 0;
-      }
-
-      if (locations.isEmpty) return 0;
-
-      final distanceMeters = Geolocator.distanceBetween(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-        locations.first.latitude,
-        locations.first.longitude,
-      );
-
-      print('✅ Distance from ${widget.collectorTown} to $town = ${distanceMeters / 1000} km');
-      return distanceMeters / 1000;
-    } catch (e, st) {
-      print('❌ Exception in _getDistanceFromTown($town): $e\n$st');
+    if (location.latitude == null || location.longitude == null) {
+      print('⚠️ Could not find coordinates for $town');
       return 0;
     }
+
+    final distanceMeters = Geolocator.distanceBetween(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+      location.latitude!,
+      location.longitude!,
+    );
+    return distanceMeters / 1000;
+  } catch (e) {
+    print('❌ Geocoding failed for $town: $e');
+    return 0;
   }
+}
 
   Future<void> _computeClientDistances() async {
     if (_currentPosition == null) await _getCurrentLocation();

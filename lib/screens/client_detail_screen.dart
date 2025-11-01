@@ -8,6 +8,7 @@ import '../models/client_model.dart';
 import '../services/api_service.dart';
 import 'map_screen.dart';
 import 'payment_screen.dart';
+import 'customer_support_screen.dart'; // ✅ Added import
 
 class ClientDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -220,9 +221,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 6),
-
                     Row(
                       children: [
                         const Icon(
@@ -237,9 +236,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 6),
-
                     Row(
                       children: [
                         const Icon(
@@ -261,7 +258,6 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         ),
                       ],
                     ),
-
                     if (hasPaid && amountPaid != null)
                       Row(
                         children: [
@@ -315,42 +311,26 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
               label: const Text('Print Receipt'),
               onPressed: _printReceipt,
             ),
+            const SizedBox(height: 10),
+            
+            ElevatedButton.icon(
+              icon: const Icon(Icons.support_agent),
+              label: const Text('Customer Support'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2196F3),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CustomerSupportScreen(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-/*const SizedBox(height: 10),
-                    const Text('📝 Remarks:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
-                    TextField(
-                      controller: _noteController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Enter remarks...',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.blue, width: 2),
-                        ),
-                      ),
-                      enabled: !_savingNote,
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _savingNote ? null : _saveRemarks,
-                        icon: const Icon(Icons.save),
-                        label: Text(_savingNote ? 'Saving...' : 'Save Remarks'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),*/
