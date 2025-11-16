@@ -74,8 +74,9 @@ class ClientModel {
 
     lower.forEach((key, value) {
       if (key.startsWith("status_")) status[key] = value?.toString() ?? '';
-      if (key.startsWith("collector_"))
+      if (key.startsWith("collector_")) {
         collector[key] = value?.toString() ?? '';
+      }
       if (key.startsWith("amountpaid_")) payments[key] = value;
     });
 

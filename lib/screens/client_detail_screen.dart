@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/client_model.dart';
+import '../models/user_role.dart';
 import '../services/api_service.dart';
 import 'map_screen.dart';
 import 'payment_screen.dart';
@@ -13,11 +14,13 @@ import 'customer_support_screen.dart'; // ✅ Added import
 class ClientDetailScreen extends StatefulWidget {
   final ClientModel client;
   final String collectorName;
+  final UserRole userRole;
 
   const ClientDetailScreen({
     super.key,
     required this.client,
     required this.collectorName,
+    required this.userRole,
   });
 
   @override
@@ -132,7 +135,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         await Future.delayed(const Duration(seconds: 1));
       }
 
-      await printer.connect(selectedDevice!);
+      await printer.connect(selectedDevice);
       await Future.delayed(const Duration(seconds: 2));
 
       final status =
@@ -288,29 +291,34 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
               },
             ),
             const SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.payment),
-              label: const Text('Payment Processing'),
-              onPressed: hasPaid
-                  ? null
-                  : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PaymentScreen(
-                            client: client,
-                            collectorName: widget.collectorName,
+            // Payment Processing - Only for roles that can process payments
+            if (widget.userRole.canProcessPayments())
+              ElevatedButton.icon(
+                icon: const Icon(Icons.payment),
+                label: const Text('Payment Processing'),
+                onPressed: hasPaid
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PaymentScreen(
+                              client: client,
+                              collectorName: widget.collectorName,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.print),
-              label: const Text('Print Receipt'),
-              onPressed: _printReceipt,
-            ),
+                        );
+                      },
+              ),
+            if (widget.userRole.canProcessPayments()) const SizedBox(height: 10),
+            // Print Receipt - Only for roles that can process payments
+            if (widget.userRole.canProcessPayments())
+              ElevatedButton.icon(
+                icon: const Icon(Icons.print),
+                label: const Text('Print Receipt'),
+                onPressed: _printReceipt,
+              ),
+            if (widget.userRole.canProcessPayments()) const SizedBox(height: 10),
             const SizedBox(height: 10),
             
             ElevatedButton.icon(

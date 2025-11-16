@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
+import '../services/role_service.dart';
+import '../models/user_role.dart';
 import 'home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,7 +36,14 @@ class _LoginScreenState extends State<LoginScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('loggedIn', true);
       await prefs.setString('collectorName', result['name']);
-      await prefs.setString('collectorTown', result['town']);
+      await prefs.setString('collectorTown', result['town'] ?? '');
+      
+      // Handle role from API response
+      final userRole = UserRoleExtension.fromString(result['role']);
+      await RoleService.setUserRole(userRole);
+      
+      // Store role for compatibility
+      await prefs.setString('userRole', userRole.name.toLowerCase());
 
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -42,12 +51,14 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(
           builder: (_) => HomeScreen(
             collectorName: result['name'],
-            collectorTown: result['town'],
+            collectorTown: result['town'] ?? '',
+            userRole: userRole,
           ),
         ),
       );
     } else {
-      setState(() => _error = 'Account not Found');
+      if (!mounted) return;
+      setState(() => _error = 'Invalid username or password');
     }
 
     setState(() => _loading = false);

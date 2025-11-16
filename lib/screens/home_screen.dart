@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/client_model.dart';
+import '../models/user_role.dart';
 import '../services/api_service.dart';
+import '../services/role_service.dart';
 import 'all_clients_map_screen.dart';
 import 'client_detail_screen.dart';
 import 'profile_screen.dart';
@@ -16,12 +18,14 @@ import 'profile_screen.dart';
 class HomeScreen extends StatefulWidget {
   final String collectorName;
   final String collectorTown;
+  final UserRole userRole;
   final int initialIndex;
 
   const HomeScreen({
     super.key,
     required this.collectorName,
     required this.collectorTown,
+    required this.userRole,
     this.initialIndex = 0,
   });
 
@@ -212,8 +216,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadClients() async {
     setState(() => _loading = true);
     try {
-      final list = await ApiService.getSubscribers();
-      _clients = list.map<ClientModel>((item) => ClientModel.fromJson(item)).toList();
+      // Role-based client loading
+      if (widget.userRole.canViewAllTowns()) {
+        // Admin/Manager: Get all clients
+        final list = await ApiService.getSubscribers();
+        _clients = list.map<ClientModel>((item) => ClientModel.fromJson(item)).toList();
+      } else {
+        // Collector/Viewer: Get clients by assigned town
+        _clients = await ApiService.getClientsByTown(widget.collectorTown);
+      }
       _applyFilters();
     } catch (e, st) {
       debugPrint('Error loading clients: $e\n$st');
@@ -245,8 +256,11 @@ class _HomeScreenState extends State<HomeScreen> {
     int paid = 0, unpaid = 0;
     for (final c in filtered) {
       final s = c.monthlyStatus[key]?.toLowerCase() ?? '';
-      if (s == 'paid') paid++;
-      else unpaid++;
+      if (s == 'paid') {
+        paid++;
+      } else {
+        unpaid++;
+      }
     }
 
     setState(() {
@@ -312,9 +326,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // ⛔ Removes back arrow
-        title: Text(
-          'Subscribers',
-          style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w600),
+        title: Column(
+          children: [
+            Text(
+              'Subscribers',
+              style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w600),
+            ),
+            Text(
+              '${widget.userRole.name} - ${widget.collectorTown}',
+              style: GoogleFonts.poppins(fontSize: 12, color: Colors.white70),
+            ),
+          ],
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF4093FF),
@@ -507,6 +529,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       builder: (_) => ClientDetailScreen(
                                         client: client,
                                         collectorName: widget.collectorName,
+                                        userRole: widget.userRole,
                                       ),
                                     ),
                                   );
@@ -537,6 +560,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   pageBuilder: (_, __, ___) => ProfileScreen(
                     collectorName: widget.collectorName,
                     collectorTown: widget.collectorTown,
+                    userRole: widget.userRole,
                     initialIndex: 1,
                   ),
                   transitionDuration: Duration.zero,

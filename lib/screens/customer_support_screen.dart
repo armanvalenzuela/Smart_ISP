@@ -9,6 +9,8 @@ import '../models/client_model.dart';
 import '../services/api_service.dart';
 
 class CustomerSupportScreen extends StatefulWidget {
+  const CustomerSupportScreen({super.key});
+
   @override
   _CustomerSupportScreenState createState() => _CustomerSupportScreenState();
 }

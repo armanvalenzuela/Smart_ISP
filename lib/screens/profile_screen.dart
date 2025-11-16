@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 
+import '../models/user_role.dart';
 import '../services/api_service.dart';
 import 'login_screen.dart';
 import 'all_clients_map_screen.dart';
@@ -12,12 +13,14 @@ import 'home_screen.dart';
 class ProfileScreen extends StatefulWidget {
   final String collectorName;
   final String collectorTown;
+  final UserRole userRole;
   final int initialIndex;
 
   const ProfileScreen({
     super.key,
     required this.collectorName,
     required this.collectorTown,
+    required this.userRole,
     this.initialIndex = 1,
   });
 
@@ -388,6 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   pageBuilder: (_, __, ___) => HomeScreen(
                     collectorName: widget.collectorName,
                     collectorTown: widget.collectorTown,
+                    userRole: widget.userRole,
                     initialIndex: 0,
                   ),
                   transitionDuration: Duration.zero,

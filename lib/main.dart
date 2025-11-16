@@ -8,6 +8,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'models/user_role.dart';
+import 'services/role_service.dart';
 
 
 void main() {
@@ -28,6 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   String? _collectorName;
   String? _collectorTown;
+  UserRole? _userRole;
 
   @override
   void initState() {
@@ -38,31 +41,41 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initApp() async {
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
+
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
+      if (!mounted) return;
       await _showDialog(
         'No Internet Connection',
         'Please check your network and try again.',
       );
+      if (!mounted) return;
       SystemNavigator.pop();
       return;
     }
 
     await _requestLocationPermission();
 
+    if (!mounted) return;
+
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isDarkMode = prefs.getBool('darkMode') ?? false;
-      _isLoggedIn = prefs.getBool('loggedIn') ?? false;
-      _collectorName = prefs.getString('collectorName');
-      _collectorTown = prefs.getString('collectorTown');
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isDarkMode = prefs.getBool('darkMode') ?? false;
+        _isLoggedIn = prefs.getBool('loggedIn') ?? false;
+        _collectorName = prefs.getString('collectorName');
+        _collectorTown = prefs.getString('collectorTown');
+        _userRole = UserRoleExtension.fromString(prefs.getString('userRole'));
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _requestLocationPermission() async {
     final status = await Permission.location.request();
     if (!status.isGranted) {
+      if (!mounted) return;
       await _showDialog(
         'Location Permission Required',
         'Location permission is required for this app to function properly.',
@@ -71,6 +84,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _showDialog(String title, String message) async {
+    if (!mounted) return;
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -100,10 +114,11 @@ class _MyAppState extends State<MyApp> {
       title: 'SMART ISP',
       debugShowCheckedModeBanner: false,
       theme: _isDarkMode ? _darkTheme : _lightBlueTheme,
-      home: _isLoggedIn && _collectorName != null && _collectorTown != null
+      home: _isLoggedIn && _collectorName != null && _collectorTown != null && _userRole != null
           ? HomeScreen(
               collectorName: _collectorName!,
               collectorTown: _collectorTown!,
+              userRole: _userRole!,
             )
           : const LoginScreen(),
     );
